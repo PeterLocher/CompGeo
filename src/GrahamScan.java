@@ -5,7 +5,7 @@ import java.util.function.Function;
 
 public class GrahamScan implements CHAlgo {
 
-    public List<Point> convex(List<Point> in) {
+    public GrahamScanResult convex(List<Point> in) {
         in.sort((p1, p2) -> Float.compare(p1.x, p2.x));
         ArrayList<Point> uh = new ArrayList<>();
         uh.add(in.get(0));
@@ -13,14 +13,28 @@ public class GrahamScan implements CHAlgo {
         int s = 1;
 
         for (int i = 2; i < in.size(); i++) {
-            while ((s >= 1) && Util.orientationTest(uh.get(s-1), uh.get(s), in.get(i)) > 0) {
+            while ((s >= 1) && Util.orientationTest(uh.get(s - 1), uh.get(s), in.get(i)) > 0) {
                 uh.remove(s);
                 s--;
             }
             uh.add(in.get(i));
             s++;
         }
-        return uh;
+        return new GrahamScanResult(uh);
     }
 
+    public class GrahamScanResult implements AlgorithmResult {
+        List<Point> result;
+
+        public GrahamScanResult(List<Point> result) {
+            this.result = result;
+        }
+
+        @Override
+        public List<Point> returnResult() {
+            return result;
+        }
+    }
 }
+
+

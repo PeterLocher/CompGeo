@@ -138,7 +138,7 @@ class ConvexHullTest {
         System.out.println("Testing " + testCases.size() + " cases");
         for (int j = 0; j < testCases.size(); j++) {
             List<Point> pointCloud = testCases.get(j);
-            List<Point> cHull = algorithm.convex(pointCloud);
+            List<Point> cHull = algorithm.convex(pointCloud).returnResult();
             int errors = 0;
             for (Point point : pointCloud) {
                 for (int i = 0; i < cHull.size() - 1; i++) {

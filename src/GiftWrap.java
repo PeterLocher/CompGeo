@@ -3,9 +3,21 @@ import java.util.List;
 
 public class GiftWrap implements CHAlgo {
 
-    public List<Point> convex(List<Point> in) {
+    public AlgorithmResult convex(List<Point> in) {
         List<Point> out = new ArrayList<>();
-        return out;
+        return new GiftWrapResult(out);
     }
 
+    public class GiftWrapResult implements AlgorithmResult {
+        List<Point> res;
+
+        public GiftWrapResult(List<Point> res) {
+            this.res = res;
+        }
+
+        @Override
+        public List<Point> returnResult() {
+            return null;
+        }
+    }
 }
