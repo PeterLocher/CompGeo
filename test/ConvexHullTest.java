@@ -117,7 +117,7 @@ class ConvexHullTest {
         GrahamScan grahamScan = new GrahamScan();
         testConvexHullAlgo(grahamScan, testCasesSquare100);
     }
-
+    
     @Test
     void testSimpleGraham() {
         Point point1 = new Point(1, 2);
