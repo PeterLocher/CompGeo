@@ -167,6 +167,15 @@ class ConvexHullTest {
     }
 
     @Test
+    void testGiftWrap() {
+        GiftWrap giftWrap = new GiftWrap();
+        testConvexHullAlgo(giftWrap, testCasesSquare);
+        testConvexHullAlgo(giftWrap, testCasesQuadratic);
+        testConvexHullAlgo(giftWrap, testCasesCircle);
+        testConvexHullAlgo(giftWrap, testCasesLog);
+    }
+
+    @Test
     void testSimpleGraham() {
         Point point1 = new Point(1, 2);
         Point point2 = new Point(2, 2.2f);

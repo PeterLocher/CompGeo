@@ -3,7 +3,7 @@ import java.util.List;
 
 public class GiftWrap implements CHAlgo {
 
-    public List<Point> convex(List<Point> in) {
+    public AlgorithmResult convex(List<Point> in) {
         List<Point> hull = new ArrayList<>();
         Point leftMostPoint = new Point(Float.MAX_VALUE, Float.MAX_VALUE);
         Point rightMostPoint = new Point(Float.MIN_VALUE, Float.MIN_VALUE);
@@ -28,7 +28,7 @@ public class GiftWrap implements CHAlgo {
             curPoint = bestPointSoFar;
             hull.add(bestPointSoFar);
         }
-        return hull;
+        return () -> hull;
     }
 
 }
