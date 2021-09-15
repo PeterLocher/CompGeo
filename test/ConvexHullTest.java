@@ -95,7 +95,13 @@ class ConvexHullTest {
         GrahamScan grahamScan = new GrahamScan();
         grahamScan.convex(new ArrayList<>());
         for (List<Point> pointCloud : testCasesSquare100) {
-            grahamScan.convex(pointCloud);
+            List<Point> cHull = grahamScan.convex(pointCloud);
+            for (Point point : pointCloud) {
+                for (int i = 0; i < cHull.size(); i++) {
+                    Point cPoint = cHull.get(i);
+
+                }
+            }
         }
     }
 
