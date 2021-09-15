@@ -1,7 +1,10 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Marriage {
 
-    public float[][] convex(float[][] in) {
-        float[][] out = new float[1][];
+    public List<Point> convex(List<Point> in) {
+        List<Point> out = new ArrayList<>();
         return out;
     }
 
