@@ -2,7 +2,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 class ConvexHullTest {
-
     static float x = 0, y = 0;
 
     public static float[] nextPoint() {
