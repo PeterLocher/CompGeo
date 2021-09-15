@@ -115,7 +115,6 @@ class ConvexHullTest {
     @Test
     void testGrahamScan() {
         GrahamScan grahamScan = new GrahamScan();
-        grahamScan.convex(new ArrayList<>());
         testConvexHullAlgo(grahamScan, testCasesSquare100);
     }
 
@@ -136,8 +135,7 @@ class ConvexHullTest {
         points.add(point5);
         points.add(point6);
         GrahamScan grahamScan = new GrahamScan();
-        List<Point> cHull = grahamScan.convex(points);
-        testConvexHullAlgo(grahamScan, Arrays.asList(cHull));
+        testConvexHullAlgo(grahamScan, Arrays.asList(points));
     }
 
 }
