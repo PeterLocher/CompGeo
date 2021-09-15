@@ -50,7 +50,7 @@ class ConvexHullTest {
             }
             testCasesSquare.add(pointCloud);
         }
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10000; i++) {
             resetPointGen();
             List<Point> pointCloud = new ArrayList<>();
             for (int j = 0; j < 1000; j++) {
@@ -122,20 +122,20 @@ class ConvexHullTest {
         for (int j = 0; j < testCases.size(); j++) {
             List<Point> pointCloud = testCases.get(j);
             List<Point> cHull = algorithm.convex(pointCloud);
+            int errors = 0;
             for (Point point : pointCloud) {
-                int errors = 0;
                 for (int i = 0; i < cHull.size() - 1; i++) {
                     Point cPoint = cHull.get(i);
                     Point cPoint2 = cHull.get(i + 1);
                     if (cPoint == point || cPoint2 == point) continue;
                     if (Util.orientationTest(cPoint, cPoint2, point) > 0) {
                         errors++;
-                        System.out.println("Error on: " + point);
+                        //System.out.println("Error on: " + point);
                     }
                 }
-                if (errors > 1) {
-                    System.out.println(errors + " errors on pointCloud #" + j);
-                }
+            }
+            if (errors > 1) {
+                System.out.println(errors + " errors on pointCloud #" + j);
             }
         }
     }
