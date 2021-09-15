@@ -35,7 +35,7 @@ class ConvexHullTest {
             in[0] = nextPoint();
             in[1] = nextPoint();
             in[2] = nextPoint();
-            counter += ConvexHull.orientationTest(in) == 1 ? 1 : 0;
+            counter += Util.orientationTest(in) == 1 ? 1 : 0;
         }
         System.out.println(counter);
     }
@@ -50,7 +50,7 @@ class ConvexHullTest {
             in[1] = nextPoint();
             in[2] = nextPoint();
             //System.out.println(in[2][0]);
-            counter += ConvexHull.orientationTestFactorized(in) == 1 ? 1 : 0;
+            counter += Util.orientationTestFactorized(in) == 1 ? 1 : 0;
         }
         System.out.println(counter);
     }
@@ -65,7 +65,7 @@ class ConvexHullTest {
             in[1] = nextPoint();
             in[2] = nextPoint();
             //System.out.println(in[2][0]);
-            counter += ConvexHull.orientationTestFactorizedAndCollecting(in) == 1 ? 1 : 0;
+            counter += Util.orientationTestFactorizedAndCollecting(in) == 1 ? 1 : 0;
         }
         System.out.println(counter);
     }
