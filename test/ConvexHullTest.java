@@ -148,7 +148,7 @@ class ConvexHullTest {
         testConvexHullAlgo(grahamScan, testCasesCircle);
 
     }
-
+    
     @Test
     void testSimpleGraham() {
         Point point1 = new Point(1, 2);
