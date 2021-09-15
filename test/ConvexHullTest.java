@@ -1,12 +1,15 @@
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class ConvexHullTest {
 
     static float x = 0, y = 0;
 
-    public static float[] nextPoint() {
-        float[] point = {x, y};
+    public static Point nextPoint() {
+        Point point = new Point(x, y);
         x = x + (float) Math.random();
         y = (float) Math.pow(x, 2);
         return point;
@@ -31,10 +34,10 @@ class ConvexHullTest {
         int size = 1000;
         int counter = 0;
         for (int i = 0; i < size; i++) {
-            float[][] in = new float[3][2];
-            in[0] = nextPoint();
-            in[1] = nextPoint();
-            in[2] = nextPoint();
+            List<Point> in = new ArrayList<>();
+            in.add(nextPoint());
+            in.add(nextPoint());
+            in.add(nextPoint());
             counter += Util.orientationTest(in) == 1 ? 1 : 0;
         }
         System.out.println(counter);
@@ -45,10 +48,10 @@ class ConvexHullTest {
         int size = 1000;
         int counter = 0;
         for (int i = 0; i < size; i++) {
-            float[][] in = new float[3][2];
-            in[0] = nextPoint();
-            in[1] = nextPoint();
-            in[2] = nextPoint();
+            List<Point> in = new ArrayList<>();
+            in.add(nextPoint());
+            in.add(nextPoint());
+            in.add(nextPoint());
             //System.out.println(in[2][0]);
             counter += Util.orientationTestFactorized(in) == 1 ? 1 : 0;
         }
@@ -60,10 +63,10 @@ class ConvexHullTest {
         int size = 1000;
         int counter = 0;
         for (int i = 0; i < size; i++) {
-            float[][] in = new float[3][2];
-            in[0] = nextPoint();
-            in[1] = nextPoint();
-            in[2] = nextPoint();
+            List<Point> in = new ArrayList<>();
+            in.add(nextPoint());
+            in.add(nextPoint());
+            in.add(nextPoint());
             //System.out.println(in[2][0]);
             counter += Util.orientationTestFactorizedAndCollecting(in) == 1 ? 1 : 0;
         }
