@@ -12,7 +12,7 @@ public class GrahamScan {
         uh.add(in.get(1));
         int s = 1;
 
-        for (int i = 3; i < in.size(); i++) {
+        for (int i = 2; i < in.size(); i++) {
             while ((s >= 1) && Util.orientationTest(uh.get(s-1), uh.get(s), in.get(i)) > 0) {
                 uh.remove(s);
                 s--;
