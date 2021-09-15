@@ -93,14 +93,15 @@ class ConvexHullTest {
     void testGrahamScanTriangle() {
         FigureGenerator fg = new FigureGenerator();
         GrahamScan scan = new GrahamScan();
-        List<Point> pointList = scan.convex(fg.generateTriangle());
-        Assertions.assertEquals(fg.generateTriangle(), pointList);
+        List<Point> generateTriangle = fg.generateTriangle();
+        List<Point> pointList = scan.convex(generateTriangle);
+        Assertions.assertEquals(generateTriangle, pointList);
     }
 
     @Test
     void testGrahamScan() {
         GrahamScan grahamScan = new GrahamScan();
-        grahamScan.convex(new ArrayList<>());
+        //grahamScan.convex(new ArrayList<>());
         for (int j = 0; j < testCasesSquare100.size(); j++) {
             List<Point> pointCloud = testCasesSquare100.get(j);
             List<Point> cHull = grahamScan.convex(pointCloud);
