@@ -28,6 +28,21 @@ class ConvexHullTest {
 
     static List<List<Point>> testCasesCircle = new ArrayList<>();
 
+    static List<List<Point>> testCasesLog = new ArrayList<>();
+
+    public static ArrayList<Point> generateLogPoints(int n) {
+        ArrayList<Point> points = new ArrayList<>();
+        float prevX = 1;
+        Point p = new Point(1, (float) Math.log(1));
+        for (int i = 1; i < n; i++) {
+            float newX = prevX + (float) Math.random();
+            prevX = newX;
+            points.add(p);
+            points.add(new Point(newX, (float) Math.log(newX)));
+        }
+        return points;
+    }
+
     public static ArrayList<Point> generatePointsInCircle(int n, int radius) {
         ArrayList<Point> points = new ArrayList<>();
         for (int i = 0; i < n; i++) {
@@ -61,6 +76,8 @@ class ConvexHullTest {
         for (int i = 0; i < 1000; i++) {
             List<Point> testCase = generatePointsInCircle(1000, 1);
             testCasesCircle.add(testCase);
+            testCase = generateLogPoints(1000);
+            testCasesLog.add(testCase);
         }
     }
 
@@ -146,7 +163,7 @@ class ConvexHullTest {
         testConvexHullAlgo(grahamScan, testCasesSquare);
         testConvexHullAlgo(grahamScan, testCasesQuadratic);
         testConvexHullAlgo(grahamScan, testCasesCircle);
-
+        testConvexHullAlgo(grahamScan, testCasesLog);
     }
 
     @Test
