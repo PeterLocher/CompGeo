@@ -2,6 +2,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -89,13 +90,6 @@ class ConvexHullTest {
         System.out.println(counter);
     }
 
-    @Test
-    void testGrahamScan() {
-        GrahamScan grahamScan = new GrahamScan();
-        grahamScan.convex(new ArrayList<>());
-        testConvexHullAlgo(grahamScan, testCasesSquare100);
-    }
-
     private void testConvexHullAlgo(CHAlgo algorithm, List<List<Point>> testCases) {
         for (int j = 0; j < testCases.size(); j++) {
             List<Point> pointCloud = testCases.get(j);
@@ -119,6 +113,13 @@ class ConvexHullTest {
     }
 
     @Test
+    void testGrahamScan() {
+        GrahamScan grahamScan = new GrahamScan();
+        grahamScan.convex(new ArrayList<>());
+        testConvexHullAlgo(grahamScan, testCasesSquare100);
+    }
+
+    @Test
     void testSimpleGraham() {
         Point point1 = new Point(1, 2);
         Point point2 = new Point(2, 2.2f);
@@ -136,22 +137,7 @@ class ConvexHullTest {
         points.add(point6);
         GrahamScan grahamScan = new GrahamScan();
         List<Point> cHull = grahamScan.convex(points);
-        for (int j = 0; j < points.size(); j++) {
-            Point point = points.get(j);
-            int errors = 0;
-            for (int i = 0; i < cHull.size() - 1; i++) {
-                Point cPoint = cHull.get(i);
-                Point cPoint2 = cHull.get(i + 1);
-                if (cPoint == point || cPoint2 == point) continue;
-                if (Util.orientationTest(cPoint, cPoint2, point) > 0) {
-                    errors++;
-                    System.out.println("Error on: " + point);
-                }
-            }
-            if (errors > 1) {
-                System.out.println(errors + " errors on pointCloud #" + j);
-            }
-        }
+        testConvexHullAlgo(grahamScan, Arrays.asList(cHull));
     }
 
 }
