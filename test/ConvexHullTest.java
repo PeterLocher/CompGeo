@@ -92,9 +92,13 @@ class ConvexHullTest {
     void testGrahamScan() {
         GrahamScan grahamScan = new GrahamScan();
         grahamScan.convex(new ArrayList<>());
-        for (int j = 0; j < testCasesSquare100.size(); j++) {
-            List<Point> pointCloud = testCasesSquare100.get(j);
-            List<Point> cHull = grahamScan.convex(pointCloud);
+        testConvexHullAlgo(grahamScan, testCasesSquare100);
+    }
+
+    private void testConvexHullAlgo(CHAlgo algorithm, List<List<Point>> testCases) {
+        for (int j = 0; j < testCases.size(); j++) {
+            List<Point> pointCloud = testCases.get(j);
+            List<Point> cHull = algorithm.convex(pointCloud);
             for (Point point : pointCloud) {
                 int errors = 0;
                 for (int i = 0; i < cHull.size() - 1; i++) {
