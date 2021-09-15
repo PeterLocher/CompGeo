@@ -28,6 +28,21 @@ class ConvexHullTest {
 
     static List<List<Point>> testCasesCircle = new ArrayList<>();
 
+    static List<List<Point>> testCasesLog = new ArrayList<>();
+
+    public static ArrayList<Point> generateLogPoints(int n) {
+        ArrayList<Point> points = new ArrayList<>();
+        float prevX = 1;
+        Point p = new Point(1, (float) Math.log(1));
+        for (int i = 1; i < n; i++) {
+            float newX = prevX + (float) Math.random();
+            prevX = newX;
+            points.add(p);
+            points.add(new Point(newX, (float) Math.log(newX)));
+        }
+        return points;
+    }
+
     public static ArrayList<Point> generatePointsInCircle(int n, int radius) {
         ArrayList<Point> points = new ArrayList<>();
         for (int i = 0; i < n; i++) {
@@ -61,6 +76,8 @@ class ConvexHullTest {
         for (int i = 0; i < 1000; i++) {
             List<Point> testCase = generatePointsInCircle(1000, 1);
             testCasesCircle.add(testCase);
+            testCase = generateLogPoints(1000);
+            testCasesLog.add(testCase);
         }
     }
 
@@ -121,7 +138,7 @@ class ConvexHullTest {
         System.out.println("Testing " + testCases.size() + " cases");
         for (int j = 0; j < testCases.size(); j++) {
             List<Point> pointCloud = testCases.get(j);
-            List<Point> cHull = algorithm.convex(pointCloud);
+            List<Point> cHull = algorithm.convex(pointCloud).returnResult();
             int errors = 0;
             for (Point point : pointCloud) {
                 for (int i = 0; i < cHull.size() - 1; i++) {
@@ -146,9 +163,9 @@ class ConvexHullTest {
         testConvexHullAlgo(grahamScan, testCasesSquare);
         testConvexHullAlgo(grahamScan, testCasesQuadratic);
         testConvexHullAlgo(grahamScan, testCasesCircle);
-
+        testConvexHullAlgo(grahamScan, testCasesLog);
     }
-    
+
     @Test
     void testSimpleGraham() {
         Point point1 = new Point(1, 2);
