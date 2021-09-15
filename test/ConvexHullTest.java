@@ -20,12 +20,10 @@ class ConvexHullTest {
         y = 0;
     }
 
-
-
-    List<List<Point>> testCasesSquare100 = new ArrayList<>();
+    static List<List<Point>> testCasesSquare100 = new ArrayList<>();
 
     @BeforeAll
-    void setUp() {
+    static void setUp() {
         Random random = new Random();
         for (int i = 0; i < 100; i++) {
             List<Point> pointCloud = new ArrayList<>();
@@ -96,9 +94,13 @@ class ConvexHullTest {
         for (List<Point> pointCloud : testCasesSquare100) {
             List<Point> cHull = grahamScan.convex(pointCloud);
             for (Point point : pointCloud) {
-                for (int i = 0; i < cHull.size(); i++) {
+                for (int i = 0; i < cHull.size() - 1; i++) {
                     Point cPoint = cHull.get(i);
-
+                    Point cPoint2 = cHull.get(i + 1);
+                    if (cPoint == point || cPoint2 == point) continue;
+                    if (Util.orientationTest(cPoint, cPoint2, point) > 0) {
+                        System.out.println("Error on: " + point);
+                    }
                 }
             }
         }
