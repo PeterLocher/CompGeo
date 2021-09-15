@@ -26,6 +26,7 @@ class ConvexHullTest {
     @BeforeAll
     static void setUp() {
         Random random = new Random();
+        random.setSeed(11);
         for (int i = 0; i < 100; i++) {
             List<Point> pointCloud = new ArrayList<>();
             for (int j = 0; j < 100; j++) {
@@ -115,7 +116,38 @@ class ConvexHullTest {
 
     @Test
     void testSimpleGraham() {
-        
+        Point point1 = new Point(1, 2);
+        Point point2 = new Point(2, 2.2f);
+        Point point3 = new Point(0.5f, 0.5f);
+        Point point4 = new Point(0.2f, 1.3f);
+        Point point5 = new Point(4.9f, 2);
+        Point point6 = new Point(0, 5.4444f);
+
+        List<Point> points = new ArrayList<>();
+        points.add(point1);
+        points.add(point2);
+        points.add(point3);
+        points.add(point4);
+        points.add(point5);
+        points.add(point6);
+        GrahamScan grahamScan = new GrahamScan();
+        List<Point> cHull = grahamScan.convex(points);
+        for (int j = 0; j < points.size(); j++) {
+            Point point = points.get(j);
+            int errors = 0;
+            for (int i = 0; i < cHull.size() - 1; i++) {
+                Point cPoint = cHull.get(i);
+                Point cPoint2 = cHull.get(i + 1);
+                if (cPoint == point || cPoint2 == point) continue;
+                if (Util.orientationTest(cPoint, cPoint2, point) > 0) {
+                    errors++;
+                    System.out.println("Error on: " + point);
+                }
+            }
+            if (errors > 1) {
+                System.out.println(errors + " errors on pointCloud #" + j);
+            }
+        }
     }
 
 }
