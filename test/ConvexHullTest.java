@@ -32,7 +32,7 @@ class ConvexHullTest {
         for (int i = 0; i < 100; i++) {
             List<Point> pointCloud = new ArrayList<>();
             for (int j = 0; j < 100; j++) {
-                pointCloud.add(new Point(random.nextFloat()*1000, random.nextFloat()*1000));
+                pointCloud.add(new Point(random.nextFloat() * 1000, random.nextFloat() * 1000));
             }
             testCasesSquare100.add(pointCloud);
         }
