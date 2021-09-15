@@ -1,3 +1,4 @@
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +29,7 @@ class ConvexHullTest {
         for (int i = 0; i < 100; i++) {
             List<Point> pointCloud = new ArrayList<>();
             for (int j = 0; j < 100; j++) {
-                pointCloud.add(new Point(random.nextFloat()*1000, random.nextFloat()*1000));
+                pointCloud.add(new Point(random.nextFloat() * 1000, random.nextFloat() * 1000));
             }
             testCasesSquare100.add(pointCloud);
         }
@@ -85,6 +86,14 @@ class ConvexHullTest {
             counter += Util.orientationTestFactorizedAndCollecting(in) == 1 ? 1 : 0;
         }
         System.out.println(counter);
+    }
+
+    @Test
+    void testGrahamScanTriangle() {
+        FigureGenerator fg = new FigureGenerator();
+        GrahamScan scan = new GrahamScan();
+        List<Point> pointList = scan.convex(fg.generateTriangle());
+        Assertions.assertEquals(fg.generateTriangle(), pointList);
     }
 
     @Test
