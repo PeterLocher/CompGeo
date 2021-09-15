@@ -3,7 +3,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
 
-public class GrahamScan {
+public class GrahamScan implements CHAlgo {
 
     public List<Point> convex(List<Point> in) {
         in.sort((p1, p2) -> Float.compare(p1.x, p2.x));
