@@ -7,9 +7,20 @@ public class GrahamScan {
 
     public List<Point> convex(List<Point> in) {
         in.sort((p1, p2) -> Float.compare(p1.x, p2.x));
-        System.out.println(in);
-        List<Point> out = new ArrayList<>();
-        return out;
+        ArrayList<Point> uh = new ArrayList<>();
+        uh.add(in.get(0));
+        uh.add(in.get(1));
+        int s = 1;
+
+        for (int i = 3; i<= in.size(); i++) {
+            while ((s >= 1) && orientationTest(p1, p2, p3) > 0) {
+                uh.remove(s);
+                s--;
+            }
+            uh.add(in.get(i));
+            s++;
+        }
+        return uh;
     }
 
 }
