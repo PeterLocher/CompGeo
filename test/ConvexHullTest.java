@@ -1,8 +1,9 @@
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 class ConvexHullTest {
     static float x = 0, y = 0;
@@ -17,6 +18,22 @@ class ConvexHullTest {
     public static void resetPointGen() {
         x = 0;
         y = 0;
+    }
+
+
+
+    List<List<Point>> testCasesSquare100 = new ArrayList<>();
+
+    @BeforeAll
+    void setUp() {
+        Random random = new Random();
+        for (int i = 0; i < 100; i++) {
+            List<Point> pointCloud = new ArrayList<>();
+            for (int j = 0; j < 100; j++) {
+                pointCloud.add(new Point(random.nextFloat()*1000, random.nextFloat()*1000));
+            }
+            testCasesSquare100.add(pointCloud);
+        }
     }
 
     @Test
@@ -74,7 +91,11 @@ class ConvexHullTest {
 
     @Test
     void testGrahamScan() {
-
+        GrahamScan grahamScan = new GrahamScan();
+        grahamScan.convex(new ArrayList<>());
+        for (List<Point> pointCloud : testCasesSquare100) {
+            grahamScan.convex(pointCloud);
+        }
     }
 
 }
