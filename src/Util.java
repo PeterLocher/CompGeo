@@ -1,6 +1,12 @@
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Util {
+
+    public static int orientationTest(Point lineStart, Point lineEnd, Point testedPoint) {
+        return orientationTest(Arrays.asList(lineStart, lineEnd, testedPoint));
+    }
 
     public static int orientationTest(List<Point> in) {
         float x1 = in.get(0).x, x2 = in.get(1).x, x3 = in.get(2).x;
