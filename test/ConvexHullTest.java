@@ -94,14 +94,20 @@ class ConvexHullTest {
         //grahamScan.convex(new ArrayList<>());
         for (List<Point> pointCloud : testCasesSquare100) {
             List<Point> cHull = grahamScan.convex(pointCloud);
-            for (Point point : pointCloud) {
+            for (int j = 0; j < pointCloud.size(); j++) {
+                Point point = pointCloud.get(j);
+                int errors = 0;
                 for (int i = 0; i < cHull.size() - 1; i++) {
                     Point cPoint = cHull.get(i);
                     Point cPoint2 = cHull.get(i + 1);
                     if (cPoint == point || cPoint2 == point) continue;
                     if (Util.orientationTest(cPoint, cPoint2, point) > 0) {
+                        errors++;
                         System.out.println("Error on: " + point);
                     }
+                }
+                if (errors > 1) {
+                    System.out.println(errors + " errors on pointCloud #" + j);
                 }
             }
         }
