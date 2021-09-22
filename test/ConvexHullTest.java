@@ -64,7 +64,7 @@ class ConvexHullTest {
         Random random = new Random();
         random.setSeed(11);
         testCases = 1000;
-        figureSize = 25600;
+        figureSize = 12800;
         for (int i = 0; i < testCases; i++) {
             List<Point> pointCloud = new ArrayList<>();
             for (int j = 0; j < figureSize; j++) {
@@ -237,6 +237,7 @@ class ConvexHullTest {
             long sortSum = 0;
             int orientationCalls = 0;
             int uhSizeSum = 0;
+            long removalSum = 0;
             for (int j = 0; j < testCases; j++) {
                 GrahamScan.GrahamScanResult res;
                 switch (tName) {
@@ -250,15 +251,18 @@ class ConvexHullTest {
                 sortSum += res.sortTimeNano;
                 orientationCalls += res.orientationTestCall;
                 uhSizeSum += res.result.size();
+                removalSum += res.removals;
             }
             ArrayList<Long> experimentResults = new ArrayList<>();
             long execAvg = execSum / testCases;
             long sortAvg = sortSum / testCases;
             int orientationAvg = orientationCalls / testCases;
             int upperHullSize = uhSizeSum / testCases;
+            long removalAverage = removalSum / testCases;
             experimentResults.add(execAvg);
             experimentResults.add(sortAvg);
             experimentResults.add((long) orientationAvg);
+            experimentResults.add(removalAverage);
             experimentResults.add((long) upperHullSize);
             avgExecTimes.add(experimentResults);
         }

@@ -7,9 +7,11 @@ public class GrahamScan implements CHAlgo {
     boolean experimentation = false;
     long sortTimeStart, sortTimeStop;
     long execTimeStart, execTimeStop;
+    int removals;
 
     public GrahamScanResult convex(List<Point> in) {
         execTimeStart = System.nanoTime();
+        removals = 0;
         if (in.size() == 0) {
             return new GrahamScanResult(new ArrayList<>());
         }
@@ -25,6 +27,7 @@ public class GrahamScan implements CHAlgo {
             while ((s >= 1) && Util.orientationTest(uh.get(s - 1), uh.get(s), in.get(i)) > 0) {
                 uh.remove(s);
                 s--;
+                removals++;
             }
             uh.add(in.get(i));
             s++;
@@ -34,6 +37,7 @@ public class GrahamScan implements CHAlgo {
         res.execTimeNano = execTimeStop - execTimeStart;
         res.sortTimeNano = sortTimeStop - sortTimeStart;
         res.orientationTestCall = Util.orientationTestCalls;
+        res.removals = removals;
         Util.orientationTestCalls = 0;
         return res;
     }
@@ -47,6 +51,7 @@ public class GrahamScan implements CHAlgo {
         long sortTimeNano;
         long execTimeNano;
         int orientationTestCall;
+        int removals;
 
         public GrahamScanResult(List<Point> result) {
             this.result = result;
