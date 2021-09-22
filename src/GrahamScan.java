@@ -4,6 +4,7 @@ import java.util.Random;
 import java.util.function.Function;
 
 public class GrahamScan implements CHAlgo {
+    boolean experimentation = false;
 
     public GrahamScanResult convex(List<Point> in) {
         in.sort((p1, p2) -> Float.compare(p1.x, p2.x));
