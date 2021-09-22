@@ -12,7 +12,7 @@ class ConvexHullTest {
 
     public static Point nextPoint() {
         Point point = new Point(x, y);
-        x = x + (float) Math.random();
+        x = x + (float) Math.random() + 0.01f;
         y = (float) Math.pow(x, 2);
         return point;
     }
@@ -124,10 +124,33 @@ class ConvexHullTest {
     }
 
     @Test
-    void testGrahamScan() {
+    void testGrahamScanAll() {
+        testGrahamScanSquare();
+        testGrahamScanQuadratic();
+        testGrahamScanEmpty();
+    }
+
+    @Test
+    void testGrahamScanSquare() {
         GrahamScan grahamScan = new GrahamScan();
         testConvexHullAlgo(grahamScan, testCasesSquare);
-        testConvexHullAlgo(grahamScan, testCasesQuadratic);
+    }
+
+    @Test
+    void testGrahamScanQuadratic() {
+        GrahamScan grahamScan = new GrahamScan();
+        for (int j = 0; j < testCasesQuadratic.size(); j++) {
+            List<Point> pointCloud = testCasesQuadratic.get(j);
+            List<Point> cHull = grahamScan.convex(pointCloud);
+            System.out.println(cHull.size());
+            assert cHull.size() == 2;
+        }
+    }
+
+    @Test
+    void testGrahamScanEmpty() {
+        GrahamScan grahamScan = new GrahamScan();
+        testConvexHullAlgo(grahamScan, new ArrayList<>());
     }
     
     @Test

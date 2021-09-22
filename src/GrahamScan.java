@@ -6,6 +6,9 @@ import java.util.function.Function;
 public class GrahamScan implements CHAlgo {
 
     public List<Point> convex(List<Point> in) {
+        if (in.size() == 0) {
+            return new ArrayList<>();
+        }
         in.sort((p1, p2) -> Float.compare(p1.x, p2.x));
         ArrayList<Point> uh = new ArrayList<>();
         uh.add(in.get(0));
