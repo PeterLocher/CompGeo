@@ -220,7 +220,6 @@ class ConvexHullTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     @Test
