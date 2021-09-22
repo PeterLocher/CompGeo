@@ -27,4 +27,5 @@ public class Util {
         float y1 = in.get(0).y, y2 = in.get(1).y, y3 = in.get(2).y;
         return (int) Math.signum(x1 * y2 + x2 * y3 + x3 * y1 - x1 * y3 - x2 * y1 - x3 * y2);
     }
+
 }
