@@ -3,8 +3,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Util {
+    public static int orientationTestCalls = 0;
 
     public static int orientationTest(Point lineStart, Point lineEnd, Point testedPoint) {
+        orientationTestCalls++;
         return orientationTest(Arrays.asList(lineStart, lineEnd, testedPoint));
     }
 
