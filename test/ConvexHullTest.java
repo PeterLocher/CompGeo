@@ -1,6 +1,10 @@
+import netscape.javascript.JSObject;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +13,7 @@ import java.util.Random;
 class ConvexHullTest {
 
     static float x = 0, y = 0;
+    static int testCases, figureSize;
 
     public static Point nextPoint() {
         Point point = new Point(x, y);
@@ -34,10 +39,10 @@ class ConvexHullTest {
         ArrayList<Point> points = new ArrayList<>();
         float prevX = 1;
         Point p = new Point(1, (float) Math.log(1));
+        points.add(p);
         for (int i = 1; i < n; i++) {
             float newX = prevX + (float) Math.random();
             prevX = newX;
-            points.add(p);
             points.add(new Point(newX, (float) Math.log(newX)));
         }
         return points;
@@ -58,25 +63,27 @@ class ConvexHullTest {
     static void setUp() {
         Random random = new Random();
         random.setSeed(11);
-        for (int i = 0; i < 1000; i++) {
+        testCases = 1000;
+        figureSize = 12800;
+        for (int i = 0; i < testCases; i++) {
             List<Point> pointCloud = new ArrayList<>();
-            for (int j = 0; j < 1000; j++) {
-                pointCloud.add(new Point(random.nextFloat() * 1000, random.nextFloat() * 1000));
+            for (int j = 0; j < figureSize; j++) {
+                pointCloud.add(new Point(random.nextFloat(), random.nextFloat()));
             }
             testCasesSquare.add(pointCloud);
         }
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < testCases; i++) {
             resetPointGen();
             List<Point> pointCloud = new ArrayList<>();
-            for (int j = 0; j < 1000; j++) {
+            for (int j = 0; j < figureSize; j++) {
                 pointCloud.add(nextPoint());
             }
             testCasesQuadratic.add(pointCloud);
         }
-        for (int i = 0; i < 1000; i++) {
-            List<Point> testCase = generatePointsInCircle(1000, 1);
+        for (int i = 0; i < testCases; i++) {
+            List<Point> testCase = generatePointsInCircle(figureSize, 1);
             testCasesCircle.add(testCase);
-            testCase = generateLogPoints(1000);
+            testCase = generateLogPoints(figureSize);
             testCasesLog.add(testCase);
         }
     }
@@ -195,4 +202,69 @@ class ConvexHullTest {
         testConvexHullAlgo(grahamScan, Arrays.asList(points));
     }
 
+    void saveRunTimeGHPerFigure(List<TestClassName> names, ArrayList<ArrayList<Long>> times) {
+        //Assume names of format name-name-name-name-name...
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("GHPerFigure" + "_" + testCases + "_" + figureSize + ".txt"));
+            StringBuilder out = new StringBuilder();
+            for (int i = 0; i < names.size(); i++) {
+                out.append(names.get(i)).append(": ");
+                for (int j = 0; j < times.get(i).size(); j++) {
+                    out.append(times.get(i).get(j)).append(", ");
+                }
+                out.append("\n");
+            }
+            String s = String.valueOf(out);
+            writer.write(s);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    void runSaveExperimentsGH() {
+        ArrayList<TestClassName> testClasses = new ArrayList<>();
+        testClasses.add(TestClassName.SQUARE);
+        testClasses.add(TestClassName.CIRCLE);
+        testClasses.add(TestClassName.LOG);
+        testClasses.add(TestClassName.QUADRATIC);
+        ArrayList<ArrayList<Long>> avgExecTimes = new ArrayList<>();
+        for (TestClassName tName : testClasses) {
+            GrahamScan gh = new GrahamScan();
+            long execSum = 0;
+            long sortSum = 0;
+            int orientationCalls = 0;
+            int uhSizeSum = 0;
+            long removalSum = 0;
+            for (int j = 0; j < testCases; j++) {
+                GrahamScan.GrahamScanResult res;
+                switch (tName) {
+                    case LOG -> res = gh.convex(testCasesLog.get(j));
+                    case CIRCLE -> res = gh.convex(testCasesCircle.get(j));
+                    case SQUARE -> res = gh.convex(testCasesSquare.get(j));
+                    case QUADRATIC -> res = gh.convex(testCasesQuadratic.get(j));
+                    default -> throw new IllegalStateException("Unexpected value: " + tName);
+                }
+                execSum += res.execTimeNano;
+                sortSum += res.sortTimeNano;
+                orientationCalls += res.orientationTestCall;
+                uhSizeSum += res.result.size();
+                removalSum += res.removals;
+            }
+            ArrayList<Long> experimentResults = new ArrayList<>();
+            long execAvg = execSum / testCases;
+            long sortAvg = sortSum / testCases;
+            int orientationAvg = orientationCalls / testCases;
+            int upperHullSize = uhSizeSum / testCases;
+            long removalAverage = removalSum / testCases;
+            experimentResults.add(execAvg);
+            experimentResults.add(sortAvg);
+            experimentResults.add((long) orientationAvg);
+            experimentResults.add(removalAverage);
+            experimentResults.add((long) upperHullSize);
+            avgExecTimes.add(experimentResults);
+        }
+        saveRunTimeGHPerFigure(testClasses, avgExecTimes);
+    }
 }
