@@ -73,12 +73,18 @@ public class LPSolver {
     public class Unbounded implements LPResult {}
     public class Good implements LPResult {
         public float[] results;
+        public List<Integer> tightConstraints;
         public Good(float result) {
             results = new float[1];
             results[0] = result;
         }
         public Good(float result1, float result2) {
             results = new float[] {result1, result2};
+        }
+
+        public Good(float result1, float result2, List<Integer> tightConstraints) {
+            results = new float[] {result1, result2};
+            this.tightConstraints = tightConstraints;
         }
     }
 }

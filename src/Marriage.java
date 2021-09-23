@@ -7,12 +7,6 @@ public class Marriage implements CHAlgo {
         List<Point> out = new ArrayList<>();
         if (in.size() < 2) return new MarriageResult(out);
         float splitX = in.get(0).x - in.get(1).x;
-        List<Point> leftPoints = new ArrayList<>();
-        List<Point> rightPoints = new ArrayList<>();
-        for (Point point : in) {
-            if (point.x <= splitX) leftPoints.add(point);
-            else rightPoints.add(point);
-        }
         List<Constraint2D> constraints = new ArrayList<>();
         for (Point point : in) {
             Constraint2D constraint = new Constraint2D();
@@ -23,9 +17,28 @@ public class Marriage implements CHAlgo {
         // TODO: Indbyg at linjen skal krydse splitX mellem dens to punkter
         LPSolver.LPResult res = new LPSolver().solve2D(in.get(0), splitX, 1, constraints);
         if (!(res instanceof LPSolver.Good)) return new MarriageResult(out);
-        float lineA = ((LPSolver.Good) res).results[0];
-        float lineB = ((LPSolver.Good) res).results[1];
-        return new MarriageResult(out);
+        LPSolver.Good goodRes = (LPSolver.Good) res;
+        Point p1 = in.get(goodRes.tightConstraints.get(0));
+        Point p2 = in.get(goodRes.tightConstraints.get(1));
+        Point rightBridgePoint, leftBridgePoint;
+        if (p1.x < p2.x) {
+            leftBridgePoint = p1;
+            rightBridgePoint = p2;
+        } else {
+            leftBridgePoint = p2;
+            rightBridgePoint = p1;
+        }
+        List<Point> leftPoints = new ArrayList<>();
+        List<Point> rightPoints = new ArrayList<>();
+        for (Point point : in) {
+            if (point.x < rightBridgePoint.x && point.x > leftBridgePoint.x) continue;
+            if (point.x <= splitX) leftPoints.add(point);
+            else rightPoints.add(point);
+        }
+        MarriageResult recResLeft = convex(leftPoints);
+        MarriageResult recResRight = convex(rightPoints);
+        recResLeft.res.addAll(recResRight.res);
+        return recResLeft;
     }
 
     public class MarriageResult implements AlgorithmResult {
