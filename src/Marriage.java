@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class Marriage implements CHAlgo {
@@ -38,6 +39,8 @@ public class Marriage implements CHAlgo {
         MarriageResult recResLeft = convex(leftPoints);
         MarriageResult recResRight = convex(rightPoints);
         recResLeft.res.addAll(recResRight.res);
+        recResLeft.res.sort((o1, o2) -> (int) Math.signum(o1.x - o2.x));
+        //TODO: Maybe some other way than sorting?
         return recResLeft;
     }
 
