@@ -37,7 +37,6 @@ public class LPSolver {
         float feasible_region_low = -Float.MAX_VALUE;
         float feasible_region_high = Float.MAX_VALUE;
         for (int i = 0; i   <constraints.length; i++) {
-
             if (factors[i] == 0) {
                 if (constraints[i] < 0) {
                     return new Infeasible();
@@ -48,7 +47,6 @@ public class LPSolver {
                 feasible_region_low = Float.max(feasible_region_low, constraints[i]/factors[i]);
             }
         }
-
 
         if ((feasible_region_high == Float.MAX_VALUE) && (cost < 0)) {
             return new Unbounded();
