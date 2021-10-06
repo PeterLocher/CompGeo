@@ -12,7 +12,7 @@ public class Marriage implements CHAlgo {
         Set<Point> out = new HashSet<>();
         if (in.size() < 2) return out;
         // Create line for bridging across
-        float splitX = in.get(0).x - in.get(1).x;
+        float splitX = (in.get(0).x + in.get(1).x)/2;
         // Convert points to constraints
         List<Constraint2D> constraints = new ArrayList<>();
         for (Point point : in) {
@@ -38,11 +38,14 @@ public class Marriage implements CHAlgo {
         }
         List<Point> leftPoints = new ArrayList<>();
         List<Point> rightPoints = new ArrayList<>();
+        //System.out.println("Split around " + splitX + ": " + in.get(0).x  + ", " + in.get(1).x);
         for (Point point : in) {
-            if (point.x < rightBridgePoint.x && point.x > leftBridgePoint.x) continue;
+            //System.out.println(point.x);
+            if (point.x <= rightBridgePoint.x && point.x >= leftBridgePoint.x) continue;
             if (point.x <= splitX) leftPoints.add(point);
             else rightPoints.add(point);
         }
+        //System.out.println(in.size() + " split into " + leftPoints.size() + ", " + rightPoints.size());
         out.addAll(convexSet(leftPoints));
         out.addAll(convexSet(rightPoints));
         return out;
@@ -58,7 +61,7 @@ public class Marriage implements CHAlgo {
 
         @Override
         public List<Point> returnResult() {
-            return null;
+            return res;
         }
     }
 }
