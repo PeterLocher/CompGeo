@@ -92,6 +92,7 @@ class LPTest {
         assert result instanceof LPSolver.Good;
         LPSolver.Good res = (LPSolver.Good) result;
         assert res.results[0] == -2.0;
+        assert res.tightConstraints.get(0) == 1;
     }
 
     @Test
