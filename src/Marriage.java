@@ -21,7 +21,6 @@ public class Marriage implements CHAlgo {
             constraint.b = -point.y;
             constraints.add(constraint);
         }
-        // TODO: Indbyg at linjen skal krydse splitX mellem dens to punkter
         // Find bridge
         LPSolver.LPResult res = new LPSolver().solve2D(in.get(0), splitX, 1, constraints);
         // Extract result for bridge

@@ -5,18 +5,18 @@ public class LPSolver {
 
     public LPResult solve2D(Point v, float c1, float c2, List<Constraint2D> constraints) {
         Collections.shuffle(constraints);
-        for (int i = 0; i < constraints.size(); i++) {
+        for (int i = 1; i < constraints.size(); i++) {
             Constraint2D constraint = constraints.get(i);
             if (constraint.violates(v)) {
-                float[] b = new float[i];
                 float[] a = new float[i];
+                float[] b = new float[i];
                 float x1Term = constraint.a.x / constraint.a.y;
                 float constantTerm = constraint.b / constraint.a.y;
 
                 for (int j = 0; j < i; j++) {
                     Constraint2D preConstraint = constraints.get(j);
                     a[j] = preConstraint.a.x - preConstraint.a.y * x1Term;
-                    b[j] = preConstraint.b - constantTerm;
+                    b[j] = preConstraint.b - preConstraint.a.y * constantTerm;
                 }
                 float oneDCost = c1 - c2 * x1Term;
                 LPResult result = solve(oneDCost, b, a);
@@ -48,7 +48,6 @@ public class LPSolver {
                 feasible_region_low = Float.max(feasible_region_low, constraints[i]/factors[i]);
             }
         }
-
 
         if ((feasible_region_high == Float.MAX_VALUE) && (cost < 0)) {
             return new Unbounded();
