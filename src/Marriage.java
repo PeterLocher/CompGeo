@@ -8,11 +8,13 @@ public class Marriage implements CHAlgo {
         return new MarriageResult(resList);
     }
 
+    Random random = new Random();
+
     public Set<Point> convexSet(List<Point> in) {
         Set<Point> out = new HashSet<>();
         if (in.size() < 2) return out;
         // Create line for bridging across
-        float splitX = (in.get(0).x + in.get(1).x)/2;
+        float splitX = (in.get(0).x + in.get(random.nextInt(in.size() - 1) + 1).x)/2;
         // Convert points to constraints
         List<Constraint2D> constraints = new ArrayList<>();
         for (Point point : in) {
