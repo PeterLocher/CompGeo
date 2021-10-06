@@ -8,12 +8,9 @@ import java.util.Random;
 
 class LPTest {
 
-
-
     @BeforeAll
     static void setUp() {
     }
-
 
     @Test
     void testWrongArraySize() {
@@ -36,13 +33,53 @@ class LPTest {
     }
 
     @Test
-    void testUnboundedHigh() {
+    void testUnboundedLow() {
+        LPSolver solver = new LPSolver();
+        float cost = 2;
+        float[] contraints = new float[]{1.0f};
+        float[] factors = new float[]{2.0f};
+        LPSolver.LPResult result = solver.solve(cost, contraints, factors);
+        assert result instanceof LPSolver.Unbounded;
+    }
+
+    @Test
+    void testNotUnboundedLowDueToCost() {
         LPSolver solver = new LPSolver();
         float cost = -2;
         float[] contraints = new float[]{1.0f};
         float[] factors = new float[]{2.0f};
         LPSolver.LPResult result = solver.solve(cost, contraints, factors);
+        assert !(result instanceof LPSolver.Unbounded);
+    }
+
+    @Test
+    void testUnboundedHigh() {
+        LPSolver solver = new LPSolver();
+        float cost = -2;
+        float[] contraints = new float[]{1.0f};
+        float[] factors = new float[]{-2.0f};
+        LPSolver.LPResult result = solver.solve(cost, contraints, factors);
         assert result instanceof LPSolver.Unbounded;
+    }
+
+    @Test
+    void testInfeasibleConstraint() {
+        LPSolver solver = new LPSolver();
+        float cost = 2;
+        float[] contraints = new float[]{-1.0f};
+        float[] factors = new float[]{0.0f};
+        LPSolver.LPResult result = solver.solve(cost, contraints, factors);
+        assert result instanceof LPSolver.Infeasible;
+    }
+
+    @Test
+    void testInfeasibleProblem() {
+        LPSolver solver = new LPSolver();
+        float cost = 2;
+        float[] contraints = new float[]{1.0f, -2.0f};
+        float[] factors = new float[]{1.0f, -1.0f};
+        LPSolver.LPResult result = solver.solve(cost, contraints, factors);
+        assert result instanceof LPSolver.Infeasible;
     }
 
 }
