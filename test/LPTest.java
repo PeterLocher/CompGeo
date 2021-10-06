@@ -26,8 +26,8 @@ class LPTest {
     void testDegenerateCost() {
         LPSolver solver = new LPSolver();
         float cost = 0;
-        float[] contraints = new float[]{1.0f, -2.0f};
-        float[] factors = new float[]{2.0f, -2.0f};
+        float[] contraints = new float[]{1.0f, 2.0f};
+        float[] factors = new float[]{1.0f, -1.0f};
         LPSolver.LPResult result = solver.solve(cost, contraints, factors);
         assert result instanceof LPSolver.Degenerate;
     }
@@ -80,6 +80,18 @@ class LPTest {
         float[] factors = new float[]{1.0f, -1.0f};
         LPSolver.LPResult result = solver.solve(cost, contraints, factors);
         assert result instanceof LPSolver.Infeasible;
+    }
+
+    @Test
+    void testCorrectlySolved() {
+        LPSolver solver = new LPSolver();
+        float cost = 2;
+        float[] contraints = new float[]{1.0f, 2.0f};
+        float[] factors = new float[]{1.0f, -1.0f};
+        LPSolver.LPResult result = solver.solve(cost, contraints, factors);
+        assert result instanceof LPSolver.Good;
+        LPSolver.Good res = (LPSolver.Good) result;
+        assert res.results[0] == -2.0;
     }
 
 }

@@ -36,7 +36,7 @@ public class LPSolver {
         }
         float feasible_region_low = -Float.MAX_VALUE;
         float feasible_region_high = Float.MAX_VALUE;
-        for (int i = 0; i   <constraints.length; i++) {
+        for (int i = 0; i < constraints.length; i++) {
 
             if (factors[i] == 0) {
                 if (constraints[i] < 0) {
