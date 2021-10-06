@@ -188,6 +188,15 @@ class ConvexHullTest {
     }
 
     @Test
+    void testMarriage() {
+        Marriage marriage = new Marriage();
+        testConvexHullAlgo(marriage, testCasesSquare);
+        testConvexHullAlgo(marriage, testCasesQuadratic);
+        testConvexHullAlgo(marriage, testCasesCircle);
+        testConvexHullAlgo(marriage, testCasesLog);
+    }
+
+    @Test
     void testSimpleGraham() {
         Point point1 = new Point(1, 2);
         Point point2 = new Point(2, 2.2f);

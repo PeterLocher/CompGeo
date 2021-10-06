@@ -1,13 +1,19 @@
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class Marriage implements CHAlgo {
 
     public MarriageResult convex(List<Point> in) {
-        List<Point> out = new ArrayList<>();
-        if (in.size() < 2) return new MarriageResult(out);
+        List<Point> resList = new ArrayList<>(convexSet(in));
+        resList.sort((o1, o2) -> (int) Math.signum(o1.x - o2.x));
+        return new MarriageResult(resList);
+    }
+
+    public Set<Point> convexSet(List<Point> in) {
+        Set<Point> out = new HashSet<>();
+        if (in.size() < 2) return out;
+        // Create line for bridging across
         float splitX = in.get(0).x - in.get(1).x;
+        // Convert points to constraints
         List<Constraint2D> constraints = new ArrayList<>();
         for (Point point : in) {
             Constraint2D constraint = new Constraint2D();
@@ -15,9 +21,10 @@ public class Marriage implements CHAlgo {
             constraint.b = -point.y;
             constraints.add(constraint);
         }
-        // TODO: Indbyg at linjen skal krydse splitX mellem dens to punkter
+        // Find bridge
         LPSolver.LPResult res = new LPSolver().solve2D(in.get(0), splitX, 1, constraints);
-        if (!(res instanceof LPSolver.Good)) return new MarriageResult(out);
+        // Extract result for bridge
+        if (!(res instanceof LPSolver.Good)) return out;
         LPSolver.Good goodRes = (LPSolver.Good) res;
         Point p1 = in.get(goodRes.tightConstraints.get(0));
         Point p2 = in.get(goodRes.tightConstraints.get(1));
@@ -36,12 +43,9 @@ public class Marriage implements CHAlgo {
             if (point.x <= splitX) leftPoints.add(point);
             else rightPoints.add(point);
         }
-        MarriageResult recResLeft = convex(leftPoints);
-        MarriageResult recResRight = convex(rightPoints);
-        recResLeft.res.addAll(recResRight.res);
-        recResLeft.res.sort((o1, o2) -> (int) Math.signum(o1.x - o2.x));
-        //TODO: Maybe some other way than sorting?
-        return recResLeft;
+        out.addAll(convexSet(leftPoints));
+        out.addAll(convexSet(rightPoints));
+        return out;
     }
 
     public class MarriageResult implements AlgorithmResult {
