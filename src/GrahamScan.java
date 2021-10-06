@@ -10,9 +10,10 @@ public class GrahamScan implements CHAlgo {
     int removals;
 
     public GrahamScanResult convex(List<Point> in) {
+
         execTimeStart = System.nanoTime();
         removals = 0;
-        if (in.size() == 0) {
+        if (in.size() < 2) {
             return new GrahamScanResult(new ArrayList<>());
         }
         sortTimeStart = System.nanoTime();

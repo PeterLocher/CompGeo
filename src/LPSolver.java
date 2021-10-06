@@ -49,10 +49,15 @@ public class LPSolver {
             }
         }
 
+
         if ((feasible_region_high == Float.MAX_VALUE) && (cost < 0)) {
             return new Unbounded();
         } else if ((feasible_region_low == -Float.MAX_VALUE) && (cost > 0)) {
             return new Unbounded();
+        }
+
+        if (feasible_region_high < feasible_region_low) {
+            return new Infeasible();
         }
 
         if (cost == 0) {
@@ -64,9 +69,7 @@ public class LPSolver {
         }
     }
 
-    public interface LPResult {
-    }
-
+    public interface LPResult {}
     public class Infeasible implements LPResult {}
     public class WrongArraySize implements LPResult {}
     public class Degenerate implements LPResult {}
