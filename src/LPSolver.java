@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -5,6 +6,7 @@ public class LPSolver {
 
     public LPResult solve2D(Point v, float c1, float c2, List<Constraint2D> constraints) {
         Collections.shuffle(constraints);
+        int firstTightConstraint = 0, secondTightConstraint = 1;
         for (int i = 1; i < constraints.size(); i++) {
             Constraint2D constraint = constraints.get(i);
             if (constraint.violates(v)) {
@@ -21,13 +23,16 @@ public class LPSolver {
                 float oneDCost = c1 - c2 * x1Term;
                 LPResult result = solve(oneDCost, b, a);
                 if (!(result instanceof Good)) return result;
-                float newX1 = ((Good) result).results[0];
+                Good good = ((Good) result);
+                float newX1 = good.results[0];
                 float newX2 = constantTerm - x1Term * newX1;
                 v.x = newX1;
                 v.y = newX2;
+                firstTightConstraint = good.tightConstraints.get(0);
+                secondTightConstraint = i;
             }
         }
-        return new Good(v.x, v.y);
+        return new Good(v.x, v.y, Arrays.asList(firstTightConstraint, secondTightConstraint));
     }
 
     public LPResult solve(float cost, float[] constraints, float[] factors) {
