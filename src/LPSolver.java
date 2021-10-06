@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,6 +37,8 @@ public class LPSolver {
         }
         float feasible_region_low = -Float.MAX_VALUE;
         float feasible_region_high = Float.MAX_VALUE;
+        int feasible_region_low_index = 0;
+        int feasible_region_high_index = 0;
         for (int i = 0; i < constraints.length; i++) {
 
             if (factors[i] == 0) {
@@ -44,8 +47,10 @@ public class LPSolver {
                 }
             } else if (factors[i] > 0) {
                 feasible_region_high = Float.min(feasible_region_high, constraints[i]/factors[i]);
+                feasible_region_high_index = i;
             } else {
                 feasible_region_low = Float.max(feasible_region_low, constraints[i]/factors[i]);
+                feasible_region_low_index = i;
             }
         }
 
@@ -62,9 +67,9 @@ public class LPSolver {
         if (cost == 0) {
             return new Degenerate();
         } else if(cost > 0) {
-            return new Good(feasible_region_low);
+            return new Good(feasible_region_low, feasible_region_low_index);
         } else {
-            return new Good(feasible_region_high);
+            return new Good(feasible_region_high, feasible_region_high_index);
         }
     }
 
@@ -76,9 +81,11 @@ public class LPSolver {
     public class Good implements LPResult {
         public float[] results;
         public List<Integer> tightConstraints;
-        public Good(float result) {
+        public Good(float result, int tight_constraint_index) {
             results = new float[1];
             results[0] = result;
+            tightConstraints = new ArrayList<>();
+            tightConstraints.add(tight_constraint_index);
         }
         public Good(float result1, float result2) {
             results = new float[] {result1, result2};
