@@ -62,6 +62,11 @@ public class GrahamScan implements CHAlgo {
         public List<Point> returnResult() {
             return result;
         }
+
+        @Override
+        public Long returnExecTime() {
+            return execTimeNano;
+        }
     }
 }
 

@@ -60,5 +60,10 @@ public class Marriage implements CHAlgo {
         public List<Point> returnResult() {
             return null;
         }
+
+        @Override
+        public Long returnExecTime() {
+            return null;
+        }
     }
 }
