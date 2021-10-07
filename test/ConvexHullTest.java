@@ -1,4 +1,3 @@
-import netscape.javascript.JSObject;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +17,7 @@ class ConvexHullTest {
 
     public static Point nextPoint() {
         Point point = new Point(x, y);
-        x = x + (float) Math.random();
+        x = x + (float) Math.random() + 0.1f;
         y = (float) Math.pow(x, 2);
         return point;
     }
@@ -42,7 +41,7 @@ class ConvexHullTest {
         Point p = new Point(1, (float) Math.log(1));
         points.add(p);
         for (int i = 1; i < n; i++) {
-            float newX = prevX + (float) Math.random();
+            float newX = prevX + (float) Math.random() + 0.1f;
             prevX = newX;
             points.add(new Point(newX, (float) Math.log(newX)));
         }
@@ -159,6 +158,7 @@ class ConvexHullTest {
                     if (cPoint == point || cPoint2 == point) continue;
                     if (Util.orientationTest(cPoint, cPoint2, point) > 0) {
                         errors++;
+                        break;
                         //System.out.println("Error on: " + point);
                     }
                 }
