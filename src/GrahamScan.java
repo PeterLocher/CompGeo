@@ -9,6 +9,11 @@ public class GrahamScan implements CHAlgo {
     long execTimeStart, execTimeStop;
     int removals;
 
+    @Override
+    public String toString() {
+        return "GH";
+    }
+
     public GrahamScanResult convex(List<Point> in) {
 
         execTimeStart = System.nanoTime();

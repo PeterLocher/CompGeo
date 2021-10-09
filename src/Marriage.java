@@ -1,6 +1,10 @@
 import java.util.*;
 
 public class Marriage implements CHAlgo {
+    @Override
+    public String toString() {
+        return "MBQ";
+    }
 
     public MarriageResult convex(List<Point> in) {
         List<Point> resList = new ArrayList<>(convexSet(in));
@@ -54,7 +58,8 @@ public class Marriage implements CHAlgo {
     }
 
     public class MarriageResult implements AlgorithmResult {
-
+        //# internal 1d calls
+        //# Recursion depth
         public MarriageResult(List<Point> res) {
             this.res = res;
         }
@@ -68,7 +73,7 @@ public class Marriage implements CHAlgo {
 
         @Override
         public Long returnExecTime() {
-            return null;
+            return 0L;
         }
     }
 }

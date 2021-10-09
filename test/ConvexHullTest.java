@@ -236,7 +236,7 @@ class ConvexHullTest {
     void allAlgorithmsExperimentSave() {
         resetTestCaseArrays();
         ArrayList<Integer> figSizes = new ArrayList<>(Arrays.asList(
-                2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576
+                2/*, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576*/
         ));
         testCases = 500;
 
@@ -246,13 +246,18 @@ class ConvexHullTest {
             testClasses.add(TestClassName.CIRCLE);
             testClasses.add(TestClassName.LOG);
             testClasses.add(TestClassName.QUADRATIC);
-            ArrayList<ArrayList<Long>> avgExecTimes = new ArrayList<>(4);
+            //ArrayList<ArrayList<Long>> avgExecTimes = new ArrayList<>(4);
+
             Map<CHAlgo, ArrayList<ArrayList<Long>>> algoIntoClassResultsMap = new HashMap<>();
+            GrahamScan gh = new GrahamScan();
+            Marriage mbq = new Marriage();
+            GiftWrap gw = new GiftWrap();
+            algoIntoClassResultsMap.put(gh, new ArrayList<>());
+            algoIntoClassResultsMap.put(mbq, new ArrayList<>());
+            algoIntoClassResultsMap.put(gw, new ArrayList<>());
+
             for (TestClassName tName : testClasses) {
                 //Can be moved out if results are cleared after each call in the algorithm classes
-                GrahamScan gh = new GrahamScan();
-                Marriage mbq = new Marriage();
-                GiftWrap gw = new GiftWrap();
 
                 ArrayList<CHAlgo> algos = new ArrayList<>();
                 algos.add(gh);
@@ -260,6 +265,10 @@ class ConvexHullTest {
                 algos.add(gw);
 
                 Map<CHAlgo, Long> execTimeMap = new HashMap<>();
+                execTimeMap.put(gh, 0L);
+                execTimeMap.put(mbq, 0L);
+                execTimeMap.put(gw, 0L);
+
                 long execSum = 0;
                 long sortSum = 0;
                 int orientationCalls = 0;
@@ -298,27 +307,29 @@ class ConvexHullTest {
                     if (totalExecTime != null) {
                         metricResults.add(totalExecTime / testCases);
                     }
-                    avgExecTimes.add(metricResults);
+                    algoIntoClassResultsMap.get(algos.get(i)).add(metricResults);
                 }
             }
-            saveComparisonData(testClasses, avgExecTimes, figN);
+            saveComparisonData(testClasses, algoIntoClassResultsMap, figN);
         }
     }
 
-    private void saveComparisonData(ArrayList<TestClassName> testClasses, ArrayList<ArrayList<Long>> avgExecTimes, Integer figN) {
+    private void saveComparisonData(ArrayList<TestClassName> testClasses, Map<CHAlgo, ArrayList<ArrayList<Long>>> avgExecTimes, Integer figN) {
         //Assume names of format name-name-name-name-name...
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter("GHPerFigure" + "_" + testCases + "_" + figN + ".txt"));
+            BufferedWriter writer = new BufferedWriter(new FileWriter("comparison" + "_" + testCases + "_" + figN + ".txt"));
             StringBuilder out = new StringBuilder();
-            for (int i = 0; i < testClasses.size(); i++) {
-                out.append(testClasses.get(i)).append(": ");
-                for (int j = 0; j < avgExecTimes.get(i).size(); j++) {
-                    out.append(avgExecTimes.get(i).get(j)).append(", ");
+            for (CHAlgo algorithm : avgExecTimes.keySet()) {
+                out.append(algorithm.toString()).append("\n");
+                for (int i = 0; i < testClasses.size(); i++) {
+                    out.append(testClasses.get(i)).append(": ");
+                    for (int j = 0; j < avgExecTimes.get(i).size(); j++) {
+                        out.append(avgExecTimes.get(i).get(j)).append(", ");
+                    }
+                    out.append("\n");
                 }
-                out.append("\n");
             }
-            String s = String.valueOf(out);
-            writer.write(s);
+            writer.write(String.valueOf(out));
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();

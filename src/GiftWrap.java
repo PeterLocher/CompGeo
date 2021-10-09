@@ -2,6 +2,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GiftWrap implements CHAlgo {
+    @Override
+    public String toString() {
+        return "GW";
+    }
 
     public AlgorithmResult convex(List<Point> in) {
         List<Point> hull = new ArrayList<>();
@@ -28,7 +32,26 @@ public class GiftWrap implements CHAlgo {
             curPoint = bestPointSoFar;
             hull.add(bestPointSoFar);
         }
-        return () -> hull;
+        return new GiftWrapResult(hull);
     }
 
+    public class GiftWrapResult implements AlgorithmResult {
+        List<Point> result;
+
+        //Orientation test calls
+
+        public GiftWrapResult(List<Point> hull) {
+            this.result = hull;
+        }
+
+        @Override
+        public List<Point> returnResult() {
+            return result;
+        }
+
+        @Override
+        public Long returnExecTime() {
+            return 0L;
+        }
+    }
 }
