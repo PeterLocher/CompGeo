@@ -7,7 +7,10 @@ public class GiftWrap implements CHAlgo {
         return "GW";
     }
 
+    long execTimeStart, execTimeStop;
+
     public AlgorithmResult convex(List<Point> in) {
+        execTimeStart = System.nanoTime();
         List<Point> hull = new ArrayList<>();
         Point leftMostPoint = new Point(Float.MAX_VALUE, Float.MAX_VALUE);
         Point rightMostPoint = new Point(Float.MIN_VALUE, Float.MIN_VALUE);
@@ -32,12 +35,15 @@ public class GiftWrap implements CHAlgo {
             curPoint = bestPointSoFar;
             hull.add(bestPointSoFar);
         }
-        return new GiftWrapResult(hull);
+        execTimeStop = System.nanoTime();
+        GiftWrapResult res = new GiftWrapResult(hull);
+        res.totalRunTime = execTimeStop - execTimeStart;
+        return res;
     }
 
     public class GiftWrapResult implements AlgorithmResult {
         List<Point> result;
-
+        long totalRunTime;
         //Orientation test calls
 
         public GiftWrapResult(List<Point> hull) {
@@ -51,7 +57,7 @@ public class GiftWrap implements CHAlgo {
 
         @Override
         public Long returnExecTime() {
-            return 0L;
+            return totalRunTime;
         }
     }
 }

@@ -1,15 +1,22 @@
 import java.util.*;
 
 public class Marriage implements CHAlgo {
+    private long execTimeStop;
+    private long execTimeStart;
+
     @Override
     public String toString() {
         return "MBQ";
     }
 
     public MarriageResult convex(List<Point> in) {
+        execTimeStart = System.nanoTime();
         List<Point> resList = new ArrayList<>(convexSet(in));
         resList.sort((o1, o2) -> (int) Math.signum(o1.x - o2.x));
-        return new MarriageResult(resList);
+        execTimeStop = System.nanoTime();
+        MarriageResult result = new MarriageResult(resList);
+        result.totalRunTime = execTimeStop - execTimeStart;
+        return result;
     }
 
     Random random = new Random();
@@ -18,7 +25,7 @@ public class Marriage implements CHAlgo {
         Set<Point> out = new HashSet<>();
         if (in.size() < 2) return out;
         // Create line for bridging across
-        float splitX = (in.get(0).x + in.get(random.nextInt(in.size() - 1) + 1).x)/2;
+        float splitX = (in.get(0).x + in.get(random.nextInt(in.size() - 1) + 1).x) / 2;
         // Convert points to constraints
         List<Constraint2D> constraints = new ArrayList<>();
         for (Point point : in) {
@@ -65,6 +72,7 @@ public class Marriage implements CHAlgo {
         }
 
         List<Point> res;
+        long totalRunTime;
 
         @Override
         public List<Point> returnResult() {
@@ -73,7 +81,7 @@ public class Marriage implements CHAlgo {
 
         @Override
         public Long returnExecTime() {
-            return 0L;
+            return totalRunTime;
         }
     }
 }

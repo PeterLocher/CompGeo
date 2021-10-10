@@ -50,7 +50,7 @@ class ConvexHullTest {
         for (int i = 0; i < n; i++) {
             double a = Math.random() * 2 * Math.PI;
             double r = radius * Math.sqrt(Math.random());
-            Point p = new Point((float) (r * Math.cos(a)), (float) (r * Math.sin(a)));
+            Point p = new Point((float) (r * Math.cos(a)) + 1f, (float) (r * Math.sin(a)) + 1f);
             points.add(p);
         }
         return points;
@@ -237,11 +237,12 @@ class ConvexHullTest {
     void allAlgorithmsExperimentSave() {
         resetTestCaseArrays();
         ArrayList<Integer> figSizes = new ArrayList<>(Arrays.asList(
-                2/*, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576*/
+                65536, 131072, 262144, 524288, 1048576
         ));
         testCases = 500;
 
         for (Integer figN : figSizes) {
+            System.out.println(figN);
             ArrayList<TestClassName> testClasses = new ArrayList<>();
             testClasses.add(TestClassName.SQUARE);
             testClasses.add(TestClassName.CIRCLE);
@@ -315,13 +316,14 @@ class ConvexHullTest {
         }
     }
 
-    private void saveComparisonData(ArrayList<TestClassName> testClasses, Map<CHAlgo, ArrayList<ArrayList<Long>>> avgExecTimes, Integer figN) {
+    private void saveComparisonData(ArrayList<TestClassName> testClasses, Map<CHAlgo, ArrayList<ArrayList<Long>>> avgExecTimesMap, Integer figN) {
         //Assume names of format name-name-name-name-name...
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter("comparison" + "_" + testCases + "_" + figN + ".txt"));
             StringBuilder out = new StringBuilder();
-            for (CHAlgo algorithm : avgExecTimes.keySet()) {
+            for (CHAlgo algorithm : avgExecTimesMap.keySet()) {
                 out.append(algorithm.toString()).append("\n");
+                ArrayList<ArrayList<Long>> avgExecTimes = avgExecTimesMap.get(algorithm);
                 for (int i = 0; i < testClasses.size(); i++) {
                     out.append(testClasses.get(i)).append(": ");
                     for (int j = 0; j < avgExecTimes.get(i).size(); j++) {
