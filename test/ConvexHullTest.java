@@ -254,6 +254,16 @@ class ConvexHullTest {
     }
 
     @Test
+    void compareUpperHulls() {
+        ArrayList<Point> testCase = generatePointsInCircle(10000, 1);
+        GrahamScan gh = new GrahamScan();
+        GiftWrap mbq = new GiftWrap();
+        GrahamScan.GrahamScanResult ghRes = gh.convex(testCase);
+        GiftWrap.GiftWrapResult mbqRes = mbq.convex(testCase);
+        System.out.println(mbqRes);
+    }
+
+    @Test
     void allAlgorithmsExperimentSave() {
         resetTestCaseArrays();
         ArrayList<Integer> figSizes = new ArrayList<>(Arrays.asList(
