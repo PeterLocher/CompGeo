@@ -4,8 +4,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class LPSolver {
+    public long twoDCalls, oneDCalls;
 
     public LPResult solve2D(Point v, float c1, float c2, List<Constraint2D> constraints) {
+        Util.twoDCalls++;
         Collections.shuffle(constraints);
         int firstTightConstraint = 0, secondTightConstraint = 1;
         for (int i = 1; i < constraints.size(); i++) {
@@ -37,6 +39,7 @@ public class LPSolver {
     }
 
     public LPResult solve(float cost, float[] constraints, float[] factors) {
+        Util.oneDCalls++;
         if (constraints.length != factors.length) {
             return new WrongArraySize();
         }
@@ -51,10 +54,10 @@ public class LPSolver {
                     return new Infeasible();
                 }
             } else if (factors[i] > 0) {
-                feasible_region_high = Float.min(feasible_region_high, constraints[i]/factors[i]);
+                feasible_region_high = Float.min(feasible_region_high, constraints[i] / factors[i]);
                 feasible_region_high_index = i;
             } else {
-                feasible_region_low = Float.max(feasible_region_low, constraints[i]/factors[i]);
+                feasible_region_low = Float.max(feasible_region_low, constraints[i] / factors[i]);
                 feasible_region_low_index = i;
             }
         }
@@ -71,33 +74,45 @@ public class LPSolver {
 
         if (cost == 0) {
             return new Degenerate();
-        } else if(cost > 0) {
+        } else if (cost > 0) {
             return new Good(feasible_region_low, feasible_region_low_index);
         } else {
             return new Good(feasible_region_high, feasible_region_high_index);
         }
     }
 
-    public interface LPResult {}
-    public class Infeasible implements LPResult {}
-    public class WrongArraySize implements LPResult {}
-    public class Degenerate implements LPResult {}
-    public class Unbounded implements LPResult {}
+    public interface LPResult {
+    }
+
+    public class Infeasible implements LPResult {
+    }
+
+    public class WrongArraySize implements LPResult {
+    }
+
+    public class Degenerate implements LPResult {
+    }
+
+    public class Unbounded implements LPResult {
+    }
+
     public class Good implements LPResult {
         public float[] results;
         public List<Integer> tightConstraints;
+
         public Good(float result, int tight_constraint_index) {
             results = new float[1];
             results[0] = result;
             tightConstraints = new ArrayList<>();
             tightConstraints.add(tight_constraint_index);
         }
+
         public Good(float result1, float result2) {
-            results = new float[] {result1, result2};
+            results = new float[]{result1, result2};
         }
 
         public Good(float result1, float result2, List<Integer> tightConstraints) {
-            results = new float[] {result1, result2};
+            results = new float[]{result1, result2};
             this.tightConstraints = tightConstraints;
         }
     }

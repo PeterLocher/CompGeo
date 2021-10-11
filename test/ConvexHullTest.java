@@ -4,10 +4,7 @@ import org.junit.jupiter.api.Test;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 class ConvexHullTest {
 
@@ -53,7 +50,7 @@ class ConvexHullTest {
         for (int i = 0; i < n; i++) {
             double a = Math.random() * 2 * Math.PI;
             double r = radius * Math.sqrt(Math.random());
-            Point p = new Point((float) (r * Math.cos(a)), (float) (r * Math.sin(a)));
+            Point p = new Point((float) (r * Math.cos(a)) + 1f, (float) (r * Math.sin(a)) + 1f);
             points.add(p);
         }
         return points;
@@ -236,6 +233,132 @@ class ConvexHullTest {
         }
     }
 
+    void saveRunTimeGWPerFigure(List<TestClassName> names, ArrayList<ArrayList<Long>> times, Integer figSize) {
+        //Assume names of format name-name-name-name-name...
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("GWPerFigure" + "_" + testCases + "_" + figSize + ".txt"));
+            StringBuilder out = new StringBuilder();
+            for (int i = 0; i < names.size(); i++) {
+                out.append(names.get(i)).append(": ");
+                for (int j = 0; j < times.get(i).size(); j++) {
+                    out.append(times.get(i).get(j)).append(", ");
+                }
+                out.append("\n");
+            }
+            String s = String.valueOf(out);
+            writer.write(s);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    void allAlgorithmsExperimentSave() {
+        resetTestCaseArrays();
+        ArrayList<Integer> figSizes = new ArrayList<>(Arrays.asList(
+                65536, 131072, 262144, 524288, 1048576
+        ));
+        testCases = 500;
+
+        for (Integer figN : figSizes) {
+            System.out.println(figN);
+            ArrayList<TestClassName> testClasses = new ArrayList<>();
+            testClasses.add(TestClassName.SQUARE);
+            testClasses.add(TestClassName.CIRCLE);
+            testClasses.add(TestClassName.LOG);
+            testClasses.add(TestClassName.QUADRATIC);
+            //ArrayList<ArrayList<Long>> avgExecTimes = new ArrayList<>(4);
+
+            Map<CHAlgo, ArrayList<ArrayList<Long>>> algoIntoClassResultsMap = new HashMap<>();
+            GrahamScan gh = new GrahamScan();
+            Marriage mbq = new Marriage();
+            GiftWrap gw = new GiftWrap();
+            algoIntoClassResultsMap.put(gh, new ArrayList<>());
+            algoIntoClassResultsMap.put(mbq, new ArrayList<>());
+            algoIntoClassResultsMap.put(gw, new ArrayList<>());
+
+            for (TestClassName tName : testClasses) {
+                //Can be moved out if results are cleared after each call in the algorithm classes
+
+                ArrayList<CHAlgo> algos = new ArrayList<>();
+                algos.add(gh);
+                algos.add(mbq);
+                algos.add(gw);
+
+                Map<CHAlgo, Long> execTimeMap = new HashMap<>();
+                execTimeMap.put(gh, 0L);
+                execTimeMap.put(mbq, 0L);
+                execTimeMap.put(gw, 0L);
+
+                long execSum = 0;
+                long sortSum = 0;
+                int orientationCalls = 0;
+                int uhSizeSum = 0;
+                long removalSum = 0;
+                for (int j = 0; j < testCases; j++) {
+                    ArrayList<Point> input = new ArrayList<>(figN);
+                    switch (tName) {
+                        case LOG -> input = generateLogPoints(figN);
+                        case CIRCLE -> input = generatePointsInCircle(figN, 1);
+                        case SQUARE -> {
+                            ArrayList<Point> pointCloud = new ArrayList<>(figN);
+                            for (int k = 0; k < figN; k++) {
+                                pointCloud.add(new Point(random.nextFloat(), random.nextFloat()));
+                            }
+                            input = pointCloud;
+                        }
+                        case QUADRATIC -> {
+                            ArrayList<Point> pointCloud = new ArrayList<>(figN);
+                            for (int k = 0; k < figN; k++) {
+                                pointCloud.add(nextPoint());
+                            }
+                            input = pointCloud;
+                            resetPointGen();
+                        }
+                        default -> throw new IllegalStateException("Unexpected value: " + tName);
+                    }
+                    for (CHAlgo alg : algos) {
+                        AlgorithmResult res = alg.convex(input);
+                        execTimeMap.computeIfPresent(alg, (key, val) -> val + res.returnExecTime());
+                    }
+                }
+                for (int i = 0; i < algos.size(); i++) {
+                    ArrayList<Long> metricResults = new ArrayList<>();
+                    Long totalExecTime = execTimeMap.get(algos.get(i));
+                    if (totalExecTime != null) {
+                        metricResults.add(totalExecTime / testCases);
+                    }
+                    algoIntoClassResultsMap.get(algos.get(i)).add(metricResults);
+                }
+            }
+            saveComparisonData(testClasses, algoIntoClassResultsMap, figN);
+        }
+    }
+
+    private void saveComparisonData(ArrayList<TestClassName> testClasses, Map<CHAlgo, ArrayList<ArrayList<Long>>> avgExecTimesMap, Integer figN) {
+        //Assume names of format name-name-name-name-name...
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("comparison" + "_" + testCases + "_" + figN + ".txt"));
+            StringBuilder out = new StringBuilder();
+            for (CHAlgo algorithm : avgExecTimesMap.keySet()) {
+                out.append(algorithm.toString()).append("\n");
+                ArrayList<ArrayList<Long>> avgExecTimes = avgExecTimesMap.get(algorithm);
+                for (int i = 0; i < testClasses.size(); i++) {
+                    out.append(testClasses.get(i)).append(": ");
+                    for (int j = 0; j < avgExecTimes.get(i).size(); j++) {
+                        out.append(avgExecTimes.get(i).get(j)).append(", ");
+                    }
+                    out.append("\n");
+                }
+            }
+            writer.write(String.valueOf(out));
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Test
     void runSaveExperimentsGH() {
         resetTestCaseArrays();
@@ -316,7 +439,167 @@ class ConvexHullTest {
             }
             saveRunTimeGHPerFigure(testClasses, avgExecTimes, figN);
         }
+    }
 
+    @Test
+    void runSaveExperimentsGW() {
+        resetTestCaseArrays();
+        ArrayList<Integer> figSizes = new ArrayList<>(Arrays.asList(
+                2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144/*, 524288, 1048576*/
+        ));
+        testCases = 500;
+        for (Integer figN : figSizes) {
+            System.out.println(figN);
+            //generateTestCases(figN);
+            ArrayList<TestClassName> testClasses = new ArrayList<>();
+            testClasses.add(TestClassName.SQUARE);
+            testClasses.add(TestClassName.CIRCLE);
+            testClasses.add(TestClassName.LOG);
+            testClasses.add(TestClassName.QUADRATIC);
+            ArrayList<ArrayList<Long>> avgExecTimes = new ArrayList<>(4);
+            for (TestClassName tName : testClasses) {
+                GiftWrap gh = new GiftWrap();
+                long execSum = 0;
+                long sortSum = 0;
+                int orientationCalls = 0;
+                int uhSizeSum = 0;
+                long removalSum = 0;
+                for (int j = 0; j < testCases; j++) {
+                    GiftWrap.GiftWrapResult res;
+                    switch (tName) {
+                        case LOG -> res = gh.convex(generateLogPoints(figN));
+                        case CIRCLE -> res = gh.convex(generatePointsInCircle(figN, 1));
+                        case SQUARE -> {
+                            List<Point> pointCloud = new ArrayList<>(figN);
+                            for (int k = 0; k < figN; k++) {
+                                pointCloud.add(new Point(random.nextFloat(), random.nextFloat()));
+                            }
+                            res = gh.convex(pointCloud);
+                        }
+                        case QUADRATIC -> {
+                            List<Point> pointCloud = new ArrayList<>(figN);
+                            for (int k = 0; k < figN; k++) {
+                                pointCloud.add(nextPoint());
+                            }
+                            res = gh.convex(pointCloud);
+                            resetPointGen();
+                        }
+                        default -> throw new IllegalStateException("Unexpected value: " + tName);
+                    }
+                    execSum += res.totalRunTime;
+                    orientationCalls += res.orientationCalls;
+                }
+                ArrayList<Long> experimentResults = new ArrayList<>();
+                long execAvg = execSum / testCases;
+                int orientationAvg = orientationCalls / testCases;
+                experimentResults.add(execAvg);
+                experimentResults.add((long) orientationAvg);
+                avgExecTimes.add(experimentResults);
+                switch (tName) {
+                    case LOG -> testCasesLog = new ArrayList<>();
+                    case CIRCLE -> testCasesCircle = new ArrayList<>();
+                    case SQUARE -> testCasesSquare = new ArrayList<>();
+                    case QUADRATIC -> testCasesQuadratic = new ArrayList<>();
+                    default -> throw new IllegalStateException("Unexpected value: " + tName);
+                }
+            }
+            saveRunTimeGWPerFigure(testClasses, avgExecTimes, figN);
+        }
+    }
+
+    @Test
+    void runSaveExperimentsMBQ() {
+        resetTestCaseArrays();
+        ArrayList<Integer> figSizes = new ArrayList<>(Arrays.asList(
+                2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576
+        ));
+        testCases = 500;
+        for (Integer figN : figSizes) {
+            System.out.println(figN);
+            //generateTestCases(figN);
+            ArrayList<TestClassName> testClasses = new ArrayList<>();
+            testClasses.add(TestClassName.SQUARE);
+            testClasses.add(TestClassName.CIRCLE);
+            testClasses.add(TestClassName.LOG);
+            testClasses.add(TestClassName.QUADRATIC);
+            ArrayList<ArrayList<Long>> avgExecTimes = new ArrayList<>(4);
+            for (TestClassName tName : testClasses) {
+                Marriage gh = new Marriage();
+                long execSum = 0;
+                long hullSize = 0;
+                long recDepth = 0;
+                long oneD = 0;
+                long twoD = 0;
+                for (int j = 0; j < testCases; j++) {
+                    Marriage.MarriageResult res;
+                    switch (tName) {
+                        case LOG -> res = gh.convex(generateLogPoints(figN));
+                        case CIRCLE -> res = gh.convex(generatePointsInCircle(figN, 1));
+                        case SQUARE -> {
+                            List<Point> pointCloud = new ArrayList<>(figN);
+                            for (int k = 0; k < figN; k++) {
+                                pointCloud.add(new Point(random.nextFloat(), random.nextFloat()));
+                            }
+                            res = gh.convex(pointCloud);
+                        }
+                        case QUADRATIC -> {
+                            List<Point> pointCloud = new ArrayList<>(figN);
+                            for (int k = 0; k < figN; k++) {
+                                pointCloud.add(nextPoint());
+                            }
+                            res = gh.convex(pointCloud);
+                            resetPointGen();
+                        }
+                        default -> throw new IllegalStateException("Unexpected value: " + tName);
+                    }
+                    execSum += res.totalRunTime;
+                    recDepth += res.recDepth;
+                    oneD += res.oneDCalls;
+                    twoD += res.twoDCalls;
+                    hullSize += res.res.size();
+                }
+                ArrayList<Long> experimentResults = new ArrayList<>();
+                long execAvg = execSum / testCases;
+                long recAvg = recDepth / testCases;
+                long oneAvg = oneD / testCases;
+                long twoAvg = twoD / testCases;
+                long hullSizeAvg = hullSize / testCases;
+                experimentResults.add(execAvg);
+                experimentResults.add(recAvg);
+                experimentResults.add(oneAvg);
+                experimentResults.add(twoAvg);
+                experimentResults.add(hullSizeAvg);
+                avgExecTimes.add(experimentResults);
+                switch (tName) {
+                    case LOG -> testCasesLog = new ArrayList<>();
+                    case CIRCLE -> testCasesCircle = new ArrayList<>();
+                    case SQUARE -> testCasesSquare = new ArrayList<>();
+                    case QUADRATIC -> testCasesQuadratic = new ArrayList<>();
+                    default -> throw new IllegalStateException("Unexpected value: " + tName);
+                }
+            }
+            saveRunTimeMBQPerFigure(testClasses, avgExecTimes, figN);
+        }
+    }
+
+    void saveRunTimeMBQPerFigure(List<TestClassName> names, ArrayList<ArrayList<Long>> times, Integer figSize) {
+        //Assume names of format name-name-name-name-name...
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("MBQPerFigure" + "_" + testCases + "_" + figSize + ".txt"));
+            StringBuilder out = new StringBuilder();
+            for (int i = 0; i < names.size(); i++) {
+                out.append(names.get(i)).append(": ");
+                for (int j = 0; j < times.get(i).size(); j++) {
+                    out.append(times.get(i).get(j)).append(", ");
+                }
+                out.append("\n");
+            }
+            String s = String.valueOf(out);
+            writer.write(s);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void resetTestCaseArrays() {

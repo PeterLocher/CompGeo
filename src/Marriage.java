@@ -1,16 +1,35 @@
 import java.util.*;
 
 public class Marriage implements CHAlgo {
+    private long execTimeStop;
+    private long execTimeStart;
+    private long recursionDepth;
+
+    @Override
+    public String toString() {
+        return "MBQ";
+    }
 
     public MarriageResult convex(List<Point> in) {
-        List<Point> resList = new ArrayList<>(convexSet(in));
+        recursionDepth = 0;
+        execTimeStart = System.nanoTime();
+        List<Point> resList = new ArrayList<>(convexSet(in, 0L));
         resList.sort((o1, o2) -> (int) Math.signum(o1.x - o2.x));
-        return new MarriageResult(resList);
+        execTimeStop = System.nanoTime();
+        MarriageResult result = new MarriageResult(resList);
+        result.totalRunTime = execTimeStop - execTimeStart;
+        result.recDepth = recursionDepth;
+        result.oneDCalls = Util.oneDCalls;
+        result.twoDCalls = Util.twoDCalls;
+        Util.oneDCalls = 0;
+        Util.twoDCalls = 0;
+        return result;
     }
 
     Random random = new Random();
 
-    public Set<Point> convexSet(List<Point> in) {
+    public Set<Point> convexSet(List<Point> in, long depth) {
+        if (depth > recursionDepth) recursionDepth = depth;
         Set<Point> out = new HashSet<>();
         if (in.size() < 2) return out;
         // Create line for bridging across
@@ -50,8 +69,8 @@ public class Marriage implements CHAlgo {
         //System.out.println(in.size() + " split into " + leftPoints.size() + ", " + rightPoints.size());
         out.add(leftBridgePoint);
         out.add(rightBridgePoint);
-        out.addAll(convexSet(leftPoints));
-        out.addAll(convexSet(rightPoints));
+        out.addAll(convexSet(leftPoints, depth + 1));
+        out.addAll(convexSet(rightPoints, depth + 1));
         return out;
     }
 
@@ -68,16 +87,24 @@ public class Marriage implements CHAlgo {
     }
 
     public class MarriageResult implements AlgorithmResult {
-
+        //# internal 1d calls
+        //# Recursion depth
         public MarriageResult(List<Point> res) {
             this.res = res;
         }
 
         List<Point> res;
+        long totalRunTime;
+        long recDepth, oneDCalls, twoDCalls;
 
         @Override
         public List<Point> returnResult() {
             return res;
+        }
+
+        @Override
+        public Long returnExecTime() {
+            return totalRunTime;
         }
     }
 
