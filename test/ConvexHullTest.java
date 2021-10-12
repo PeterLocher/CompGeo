@@ -147,6 +147,9 @@ class ConvexHullTest {
         for (int j = 0; j < testCases.size(); j++) {
             List<Point> pointCloud = testCases.get(j);
             List<Point> cHull = algorithm.convex(pointCloud).returnResult();
+            if (cHull.size() == 0) {
+                int a = 3;
+            }
             int errors = 0;
             for (Point point : pointCloud) {
                 for (int i = 0; i < cHull.size() - 1; i++) {
@@ -255,12 +258,40 @@ class ConvexHullTest {
 
     @Test
     void compareUpperHulls() {
-        ArrayList<Point> testCase = generatePointsInCircle(10000, 1);
+        ArrayList<Point> testCase = generateLogPoints(1000);
         GrahamScan gh = new GrahamScan();
-        GiftWrap mbq = new GiftWrap();
+        Marriage mbq = new Marriage();
         GrahamScan.GrahamScanResult ghRes = gh.convex(testCase);
-        GiftWrap.GiftWrapResult mbqRes = mbq.convex(testCase);
+        Marriage.MarriageResult mbqRes = mbq.convex(testCase);
         System.out.println(mbqRes);
+    }
+
+    @Test
+    void mbqTestCase() {
+        Point point1 = new Point(1, 2);
+        Point point2 = new Point(2, 2.2f);
+        Point point3 = new Point(0.5f, 0.5f);
+        Point point4 = new Point(0.2f, 1.3f);
+        Point point5 = new Point(4.9f, 2);
+        Point point6 = new Point(0, 5.4444f);
+        Point point7 = new Point(4.356729f, 3.4358428f);
+        Point point8 = new Point(4.356729f, 3.9358428f);
+
+        List<Point> points = new ArrayList<>();
+        points.add(point1);
+        points.add(point2);
+        points.add(point3);
+        points.add(point4);
+        points.add(point5);
+        points.add(point6);
+        points.add(point7);
+        points.add(point8);
+
+        GrahamScan scan = new GrahamScan();
+        GrahamScan.GrahamScanResult b = scan.convex(points);
+        Marriage mbq = new Marriage();
+        Marriage.MarriageResult a = mbq.convex(points);
+        int abe = 0;
     }
 
     @Test
@@ -414,13 +445,6 @@ class ConvexHullTest {
                         }
                         default -> throw new IllegalStateException("Unexpected value: " + tName);
                     }
-                    /*switch (tName) {
-                        case LOG -> res = gh.convex(testCasesLog.get(j));
-                        case CIRCLE -> res = gh.convex(testCasesCircle.get(j));
-                        case SQUARE -> res = gh.convex(testCasesSquare.get(j));
-                        case QUADRATIC -> res = gh.convex(testCasesQuadratic.get(j));
-                        default -> throw new IllegalStateException("Unexpected value: " + tName);
-                    }*/
                     execSum += res.execTimeNano;
                     sortSum += res.sortTimeNano;
                     orientationCalls += res.orientationTestCall;
