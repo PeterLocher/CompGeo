@@ -57,6 +57,7 @@ public class Marriage implements CHAlgo {
             leftBridgePoint = p2;
             rightBridgePoint = p1;
         }
+        // Partition points based on the line
         List<Point> leftPoints = new ArrayList<>();
         List<Point> rightPoints = new ArrayList<>();
         //System.out.println("Split around " + splitX + ": " + in.get(0).x  + ", " + in.get(1).x);
@@ -67,6 +68,7 @@ public class Marriage implements CHAlgo {
             else rightPoints.add(point);
         }
         //System.out.println(in.size() + " split into " + leftPoints.size() + ", " + rightPoints.size());
+        // Accumulate solution from recursive calls
         out.add(leftBridgePoint);
         out.add(rightBridgePoint);
         out.addAll(convexSet(leftPoints, depth + 1));
