@@ -147,9 +147,6 @@ class ConvexHullTest {
         for (int j = 0; j < testCases.size(); j++) {
             List<Point> pointCloud = testCases.get(j);
             List<Point> cHull = algorithm.convex(pointCloud).returnResult();
-            if (cHull.size() == 0) {
-                int a = 3;
-            }
             int errors = 0;
             for (Point point : pointCloud) {
                 for (int i = 0; i < cHull.size() - 1; i++) {
@@ -229,7 +226,7 @@ class ConvexHullTest {
     }
 
     @Test
-    void testSimpleGraham() {
+    void testSimple() {
         Point point1 = new Point(1, 2);
         Point point2 = new Point(2, 2.2f);
         Point point3 = new Point(0.5f, 0.5f);
@@ -244,9 +241,13 @@ class ConvexHullTest {
         points.add(point4);
         points.add(point5);
         points.add(point6);
-        GrahamScan grahamScan = new GrahamScan();
-        testConvexHullAlgo(grahamScan, Arrays.asList(points));
+        testConvexHullAlgo(new Marriage(), Arrays.asList(points));
     }
+
+
+
+
+    // Experiments
 
     void saveRunTimeGHPerFigure(List<TestClassName> names, ArrayList<ArrayList<Long>> times, Integer figSize) {
         //Assume names of format name-name-name-name-name...
