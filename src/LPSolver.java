@@ -10,12 +10,13 @@ public class LPSolver {
             constraint.index = i;
         }
         Collections.shuffle(constraints, new Random(0));
-        int firstTightConstraint = 0, secondTightConstraint = 1;
+        int firstTightConstraint = constraints.get(0).index, secondTightConstraint = constraints.get(1).index;
         v = constraints.get(0).intersection(constraints.get(1));
-
+        boolean lastViolatingConstraintIsUnbounded = false;
         for (int i = 1; i < constraints.size(); i++) {
             Constraint2D constraint = constraints.get(i);
             if (constraint.violates(v)) {
+                lastViolatingConstraintIsUnbounded = false;
                 float[] a = new float[i];
                 float[] b = new float[i];
                 float x1Term = constraint.a.x / constraint.a.y;
@@ -30,7 +31,10 @@ public class LPSolver {
                 LPResult result = solve(oneDCost, b, a);
                 // Interpret result of 1D problem
                 if (!(result instanceof Good)) {
-                    if (result instanceof Unbounded) continue;
+                    if (result instanceof Unbounded) {
+                        lastViolatingConstraintIsUnbounded = true;
+                        continue;
+                    }
                     else return result;
                 }
                 Good good = ((Good) result);
@@ -42,6 +46,8 @@ public class LPSolver {
                 secondTightConstraint = constraints.get(i).index;
             }
         }
+        if (lastViolatingConstraintIsUnbounded)
+            return new Unbounded();
         return new Good(v.x, v.y, Arrays.asList(firstTightConstraint, secondTightConstraint));
     }
 

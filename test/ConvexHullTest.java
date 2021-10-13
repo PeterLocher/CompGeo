@@ -61,7 +61,7 @@ class ConvexHullTest {
         random = new Random();
         random.setSeed(11);
         testCases = 1000;
-        generateTestCases(10);
+        generateTestCases(1000);
     }
 
     private static void generateTestCases(int figSize) {
