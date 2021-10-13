@@ -197,6 +197,38 @@ class ConvexHullTest {
     }
 
     @Test
+    void testGrahamComparedToGW() {
+        Point point1 = new Point(1, 2);
+        Point point2 = new Point(2, 2.2f);
+        Point point3 = new Point(0.5f, 0.5f);
+        Point point4 = new Point(0.2f, 1.3f);
+        Point point5 = new Point(4.9f, 2);
+        Point point6 = new Point(0, 5.4444f);
+
+        List<Point> points = new ArrayList<>();
+        points.add(point1);
+        points.add(point2);
+        points.add(point3);
+        points.add(point4);
+        points.add(point5);
+        points.add(point6);
+        for (int i = 0; i < 1000; i++) {
+            points = generatePointsInCircle(1000, 1);
+            GrahamScan grahamScan = new GrahamScan();
+            List<Point> ghRes = grahamScan.convex(points).result;
+
+            GiftWrap gw = new GiftWrap();
+            List<Point> gwRes = gw.convex(points).result;
+
+            if (gwRes.size() != ghRes.size()){
+                System.out.println("wtf");
+            }
+        }
+
+
+    }
+
+    @Test
     void testSimpleGraham() {
         Point point1 = new Point(1, 2);
         Point point2 = new Point(2, 2.2f);
@@ -404,7 +436,7 @@ class ConvexHullTest {
     void runSaveExperimentsGH() {
         resetTestCaseArrays();
         ArrayList<Integer> figSizes = new ArrayList<>(Arrays.asList(
-                2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576
+               /* 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144,*/ 524288, 1048576
         ));
         testCases = 500;
         for (Integer figN : figSizes) {
@@ -494,10 +526,8 @@ class ConvexHullTest {
             for (TestClassName tName : testClasses) {
                 GiftWrap gh = new GiftWrap();
                 long execSum = 0;
-                long sortSum = 0;
                 int orientationCalls = 0;
-                int uhSizeSum = 0;
-                long removalSum = 0;
+                long uhSize = 0;
                 for (int j = 0; j < testCases; j++) {
                     GiftWrap.GiftWrapResult res;
                     switch (tName) {
@@ -522,12 +552,14 @@ class ConvexHullTest {
                     }
                     execSum += res.totalRunTime;
                     orientationCalls += res.orientationCalls;
+                    uhSize += res.result.size();
                 }
                 ArrayList<Long> experimentResults = new ArrayList<>();
                 long execAvg = execSum / testCases;
                 int orientationAvg = orientationCalls / testCases;
                 experimentResults.add(execAvg);
                 experimentResults.add((long) orientationAvg);
+                experimentResults.add(uhSize / testCases);
                 avgExecTimes.add(experimentResults);
                 switch (tName) {
                     case LOG -> testCasesLog = new ArrayList<>();
