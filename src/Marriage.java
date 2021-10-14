@@ -77,7 +77,7 @@ public class Marriage implements CHAlgo {
     }
 
     private float splitXRandom(List<Point> in) {
-        return (in.get(0).x + in.get(random.nextInt(in.size() - 1) + 1).x)/2;
+        return (in.get(0).x + in.get(random.nextInt(in.size() - 1) + 1).x) / 2;
     }
 
     private float splitXAverage(List<Point> in) {

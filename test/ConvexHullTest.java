@@ -217,12 +217,62 @@ class ConvexHullTest {
             GiftWrap gw = new GiftWrap();
             List<Point> gwRes = gw.convex(points).result;
 
-            if (gwRes.size() != ghRes.size()){
+            if (gwRes.size() != ghRes.size()) {
                 System.out.println("wtf");
             }
         }
 
 
+    }
+
+    @Test
+    void testSave() {
+        Point point1 = new Point(1, 2);
+        Point point2 = new Point(2, 2.2f);
+        Point point3 = new Point(0.5f, 0.5f);
+        Point point4 = new Point(0.2f, 1.3f);
+        Point point5 = new Point(4.9f, 2);
+        Point point6 = new Point(0, 5.4444f);
+        Point point7 = new Point(4.356729f, 3.4358428f);
+        Point point8 = new Point(4.356729f, 3.9358428f);
+
+        List<Point> points = new ArrayList<>();
+        points.add(point1);
+        points.add(point2);
+        points.add(point3);
+        points.add(point4);
+        points.add(point5);
+        points.add(point6);
+        points.add(point7);
+        points.add(point8);
+
+        GrahamScan scan = new GrahamScan();
+        GrahamScan.GrahamScanResult b = scan.convex(points);
+        saveInputAndHull(points, b.result);
+    }
+
+    void saveInputAndHull(List<Point> input, List<Point> hull) {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("visualiseFile"));
+            StringBuilder out = new StringBuilder();
+            for (int i = 0; i < input.size(); i++) {
+                out.append("(");
+                out.append(input.get(i).x).append(",").append(input.get(i).y).append(")");
+                out.append(";");
+            }
+            out.append("\n");
+            for (int j = 0; j < hull.size(); j++) {
+                out.append("(");
+                out.append(hull.get(j).x).append(",").append(hull.get(j).y).append(")");
+                out.append(";");
+
+            }
+            String s = String.valueOf(out);
+            writer.write(s);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
@@ -243,8 +293,6 @@ class ConvexHullTest {
         points.add(point6);
         testConvexHullAlgo(new Marriage(), Arrays.asList(points));
     }
-
-
 
 
     // Experiments
@@ -437,7 +485,7 @@ class ConvexHullTest {
     void runSaveExperimentsGH() {
         resetTestCaseArrays();
         ArrayList<Integer> figSizes = new ArrayList<>(Arrays.asList(
-               /* 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144,*/ 524288, 1048576
+                /* 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144,*/ 524288, 1048576
         ));
         testCases = 500;
         for (Integer figN : figSizes) {
