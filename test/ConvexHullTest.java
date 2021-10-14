@@ -196,33 +196,10 @@ class ConvexHullTest {
 
     @Test
     void testGrahamComparedToGW() {
-        Point point1 = new Point(1, 2);
-        Point point2 = new Point(2, 2.2f);
-        Point point3 = new Point(0.5f, 0.5f);
-        Point point4 = new Point(0.2f, 1.3f);
-        Point point5 = new Point(4.9f, 2);
-        Point point6 = new Point(0, 5.4444f);
-
-        List<Point> points = new ArrayList<>();
-        points.add(point1);
-        points.add(point2);
-        points.add(point3);
-        points.add(point4);
-        points.add(point5);
-        points.add(point6);
-        for (int i = 0; i < 1000; i++) {
-            points = generatePointsInCircle(1000, 1);
-            GrahamScan grahamScan = new GrahamScan();
-            List<Point> ghRes = grahamScan.convex(points).result;
-
-            GiftWrap gw = new GiftWrap();
-            List<Point> gwRes = gw.convex(points).result;
-
-            if (gwRes.size() != ghRes.size()) {
-                System.out.println("wtf");
-            }
-        }
-
+        ArrayList<Point> points = generatePointsInCircle(100, 1);
+        GrahamScan gw = new GrahamScan();
+        List<Point> gwRes = gw.convex(points).result;
+        saveInputAndHull(points, gwRes);
 
     }
 
