@@ -42,10 +42,21 @@ public class Marriage implements CHAlgo {
             constraint.b = -point.y;
             constraints.add(constraint);
         }
+        // Find two points on each side of the bridge
+        int lowX = -1;
+        int highX = -1;
+        for (int i = 0; i < in.size(); i++) {
+            Point point = in.get(i);
+            if (point.x < splitX) lowX = i;
+            else highX = i;
+            if (lowX != -1 && highX != -1) break;
+        }
+        if (lowX == -1 || highX == -1) throw new Error();
         // Find bridge
-        LPSolver.LPResult res = new LPSolver().solve2D(in.get(0), splitX, 1, constraints);
+        LPSolver.LPResult res = new LPSolver().solve2D(lowX, highX, splitX, 1, constraints);
         // Extract result for bridge
-        if (!(res instanceof LPSolver.Good)) return out;
+        if (!(res instanceof LPSolver.Good))
+            return out;
         LPSolver.Good goodRes = (LPSolver.Good) res;
         Point p1 = in.get(goodRes.tightConstraints.get(0));
         Point p2 = in.get(goodRes.tightConstraints.get(1));

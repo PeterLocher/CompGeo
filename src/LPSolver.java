@@ -1,15 +1,23 @@
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class LPSolver {
     public long twoDCalls, oneDCalls;
 
-    public LPResult solve2D(Point v, float c1, float c2, List<Constraint2D> constraints) {
+    public LPResult solve2D(int leftPoint, int rightPoint, float c1, float c2, List<Constraint2D> constraints) {
         Util.twoDCalls++;
-        Collections.shuffle(constraints);
-        int firstTightConstraint = 0, secondTightConstraint = 1;
+        for (int i = 0, constraintsSize = constraints.size(); i < constraintsSize; i++) {
+            Constraint2D constraint = constraints.get(i);
+            constraint.index = i;
+        }
+        Constraint2D leftConstraint = constraints.get(leftPoint);
+        Constraint2D rightConstraint = constraints.get(rightPoint);
+        constraints.remove(leftConstraint);
+        constraints.remove(rightConstraint);
+        Collections.shuffle(constraints, new Random(0));
+        constraints.add(0, rightConstraint);
+        constraints.add(0, leftConstraint);
+        int firstTightConstraint = leftPoint, secondTightConstraint = rightPoint;
+        Point v = constraints.get(0).intersection(constraints.get(1));
         for (int i = 1; i < constraints.size(); i++) {
             Constraint2D constraint = constraints.get(i);
             if (constraint.violates(v)) {
@@ -17,7 +25,7 @@ public class LPSolver {
                 float[] b = new float[i];
                 float x1Term = constraint.a.x / constraint.a.y;
                 float constantTerm = constraint.b / constraint.a.y;
-
+                // Translate to 1D constraints
                 for (int j = 0; j < i; j++) {
                     Constraint2D preConstraint = constraints.get(j);
                     a[j] = preConstraint.a.x - preConstraint.a.y * x1Term;
@@ -25,20 +33,23 @@ public class LPSolver {
                 }
                 float oneDCost = c1 - c2 * x1Term;
                 LPResult result = solve(oneDCost, b, a);
-                if (!(result instanceof Good)) return result;
+                // Interpret result of 1D problem
+                if (!(result instanceof Good)) {
+                    return result;
+                }
                 Good good = ((Good) result);
                 float newX1 = good.results[0];
                 float newX2 = constantTerm - x1Term * newX1;
                 v.x = newX1;
                 v.y = newX2;
-                firstTightConstraint = good.tightConstraints.get(0);
-                secondTightConstraint = i;
+                firstTightConstraint = constraints.get(good.tightConstraints.get(0)).index;
+                secondTightConstraint = constraints.get(i).index;
             }
         }
         return new Good(v.x, v.y, Arrays.asList(firstTightConstraint, secondTightConstraint));
     }
 
-    public LPResult solve(float cost, float[] constraints, float[] factors) {
+    public LPResult solve(float c1, float[] constraints, float[] factors) {
         Util.oneDCalls++;
         if (constraints.length != factors.length) {
             return new WrongArraySize();
@@ -48,23 +59,28 @@ public class LPSolver {
         int feasible_region_low_index = 0;
         int feasible_region_high_index = 0;
         for (int i = 0; i < constraints.length; i++) {
-
             if (factors[i] == 0) {
                 if (constraints[i] < 0) {
                     return new Infeasible();
                 }
             } else if (factors[i] > 0) {
-                feasible_region_high = Float.min(feasible_region_high, constraints[i] / factors[i]);
-                feasible_region_high_index = i;
+                float newConstraint = constraints[i] / factors[i];
+                if (newConstraint < feasible_region_high) {
+                    feasible_region_high = newConstraint;
+                    feasible_region_high_index = i;
+                }
             } else {
-                feasible_region_low = Float.max(feasible_region_low, constraints[i] / factors[i]);
-                feasible_region_low_index = i;
+                float newConstraint = constraints[i] / factors[i];
+                if (newConstraint > feasible_region_low) {
+                    feasible_region_low = newConstraint;
+                    feasible_region_low_index = i;
+                }
             }
         }
 
-        if ((feasible_region_high == Float.MAX_VALUE) && (cost < 0)) {
+        if ((feasible_region_high == Float.MAX_VALUE) && (c1 < 0)) {
             return new Unbounded();
-        } else if ((feasible_region_low == -Float.MAX_VALUE) && (cost > 0)) {
+        } else if ((feasible_region_low == -Float.MAX_VALUE) && (c1 > 0)) {
             return new Unbounded();
         }
 
@@ -72,9 +88,9 @@ public class LPSolver {
             return new Infeasible();
         }
 
-        if (cost == 0) {
+        if (c1 == 0) {
             return new Degenerate();
-        } else if (cost > 0) {
+        } else if (c1 > 0) {
             return new Good(feasible_region_low, feasible_region_low_index);
         } else {
             return new Good(feasible_region_high, feasible_region_high_index);

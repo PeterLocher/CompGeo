@@ -110,13 +110,13 @@ class LPTest {
         constraint2.a = new Point(-1.2f, -1.5f);
         constraint2.b = -3f;
         constraints.add(constraint2);
-        LPSolver.LPResult result = solver.solve2D(initPoint, c1, c2, constraints);
+        /*LPSolver.LPResult result = solver.solve2D(initPoint, c1, c2, constraints);
         System.out.println(result.getClass());
         LPSolver.Good good = (LPSolver.Good) result;
         for (float v : good.results) {
             System.out.print(v + ", ");
         }
-        System.out.println();
+        System.out.println();*/
     }
 
     @Test
@@ -138,13 +138,13 @@ class LPTest {
         constraint3.a = new Point(0.5f, 0.5f);
         constraint3.b = 6f;
         constraints.add(constraint3);
-        LPSolver.LPResult result = solver.solve2D(initPoint, c1, c2, constraints);
+        /*LPSolver.LPResult result = solver.solve2D(initPoint, c1, c2, constraints);
         System.out.println(result.getClass());
         LPSolver.Good good = (LPSolver.Good) result;
         for (float v : good.results) {
             System.out.print(v + ", ");
         }
-        System.out.println();
+        System.out.println();*/
     }
 
 }
