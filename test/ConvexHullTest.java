@@ -61,7 +61,7 @@ class ConvexHullTest {
         random = new Random();
         random.setSeed(11);
         testCases = 1000;
-        generateTestCases(1000);
+        generateTestCases(10);
     }
 
     private static void generateTestCases(int figSize) {
@@ -148,6 +148,7 @@ class ConvexHullTest {
             List<Point> pointCloud = testCases.get(j);
             List<Point> cHull = algorithm.convex(pointCloud).returnResult();
             int errors = 0;
+            System.out.println(cHull.size());
             for (Point point : pointCloud) {
                 for (int i = 0; i < cHull.size() - 1; i++) {
                     Point cPoint = cHull.get(i);
