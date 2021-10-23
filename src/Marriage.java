@@ -93,8 +93,7 @@ public class Marriage implements CHAlgo {
         // Partition points based on the line
         List<Point> leftPoints = new ArrayList<>();
         List<Point> rightPoints = new ArrayList<>();
-        //System.out.println("Split around " + splitX + ": " + in.get(0).x  + ", " + in.get(1).x);
-        for (Point point : in) {
+        /* for (Point point : in) {
             //System.out.println(point.x);
             if (point.x <= rightBridgePoint.x && point.x >= leftBridgePoint.x) continue;
             if (recursionDirection == 0) {
@@ -110,6 +109,12 @@ public class Marriage implements CHAlgo {
                 if (point.x >= splitX) continue;
                 else leftPoints.add(point);
             }
+        }*/
+        for (Point point : in) {
+            //System.out.println(point.x);
+            if (point.x <= rightBridgePoint.x && point.x >= leftBridgePoint.x) continue;
+            if (point.x <= splitX) leftPoints.add(point);
+            else rightPoints.add(point);
         }
         //System.out.println(in.size() + " split into " + leftPoints.size() + ", " + rightPoints.size());
         // Accumulate solution from recursive calls

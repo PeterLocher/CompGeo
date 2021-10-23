@@ -214,7 +214,7 @@ class ConvexHullTest {
     void marriageDebugging() {
         random.setSeed(55);
         ArrayList<Point> points = new ArrayList<>();
-        for (int k = 0; k < 12; k++) {
+        for (int k = 0; k < 1000; k++) {
             points.add(new Point(random.nextFloat(), random.nextFloat()));
         }
         Marriage m = new Marriage();
@@ -225,7 +225,7 @@ class ConvexHullTest {
     @Test
     void marriageDebuggingLog() {
         random.setSeed(55);
-        ArrayList<Point> points = generateLogPoints(6);
+        ArrayList<Point> points = generateLogPoints(1000);
         Marriage m = new Marriage();
         Marriage.MarriageResult res = m.convex(points);
         saveInputAndHull(points, res.res);
