@@ -61,7 +61,7 @@ class ConvexHullTest {
         random = new Random();
         random.setSeed(11);
         testCases = 1000;
-        generateTestCases(10);
+        generateTestCases(1000);
     }
 
     private static void generateTestCases(int figSize) {
@@ -148,7 +148,6 @@ class ConvexHullTest {
             List<Point> pointCloud = testCases.get(j);
             List<Point> cHull = algorithm.convex(pointCloud).returnResult();
             int errors = 0;
-            System.out.println(cHull.size());
             for (Point point : pointCloud) {
                 for (int i = 0; i < cHull.size() - 1; i++) {
                     Point cPoint = cHull.get(i);
@@ -200,7 +199,15 @@ class ConvexHullTest {
         GrahamScan gw = new GrahamScan();
         List<Point> gwRes = gw.convex(points).result;
         saveInputAndHull(points, gwRes);
+    }
 
+    @Test
+    void marriageDebuggingCircle() {
+        random.setSeed(55);
+        ArrayList<Point> points = generatePointsInCircle(1000, 1);
+        Marriage m = new Marriage();
+        Marriage.MarriageResult res = m.convex(points);
+        saveInputAndHull(points, res.res);
     }
 
     @Test
@@ -210,6 +217,15 @@ class ConvexHullTest {
         for (int k = 0; k < 12; k++) {
             points.add(new Point(random.nextFloat(), random.nextFloat()));
         }
+        Marriage m = new Marriage();
+        Marriage.MarriageResult res = m.convex(points);
+        saveInputAndHull(points, res.res);
+    }
+
+    @Test
+    void marriageDebuggingLog() {
+        random.setSeed(55);
+        ArrayList<Point> points = generateLogPoints(6);
         Marriage m = new Marriage();
         Marriage.MarriageResult res = m.convex(points);
         saveInputAndHull(points, res.res);

@@ -13,7 +13,7 @@ public class Marriage implements CHAlgo {
     public MarriageResult convex(List<Point> in) {
         recursionDepth = 0;
         execTimeStart = System.nanoTime();
-        List<Point> resList = new ArrayList<>(convexSet(in, 0L));
+        List<Point> resList = new ArrayList<>(convexSet(in, 0L, 0, null, null));
         resList.sort((o1, o2) -> (int) Math.signum(o1.x - o2.x));
         execTimeStop = System.nanoTime();
         MarriageResult result = new MarriageResult(resList);
@@ -28,12 +28,34 @@ public class Marriage implements CHAlgo {
 
     Random random = new Random();
 
-    public Set<Point> convexSet(List<Point> in, long depth) {
+    public Set<Point> convexSet(List<Point> in, long depth, int recursionDirection, Point prevLeftBridgeP, Point prevRightBrightP) {
+        //Recursiondirection: 0 initial, 1 right, -1 left
         if (depth > recursionDepth) recursionDepth = depth;
         Set<Point> out = new HashSet<>();
-        if (in.size() < 2) return out;
+        if (in.size() == 0) return out;
+        if (in.size() < 2) {
+            Point p = in.get(0);
+            if (recursionDirection == 0) {
+                //Convex hull on one point is just one point?
+                return new HashSet<>(in);
+            } else {
+                if (Util.orientationTest(prevLeftBridgeP, prevRightBrightP, p) <= 0) {
+                    return new HashSet<>(in);
+                } else {
+                    return out;
+                }
+            }
+        }
         // Create line for bridging across
+        double[] arr = in.stream().mapToDouble(p -> (double) p.x).toArray();
+        float[] floatArr = new float[in.size()];
+        for (int i = 0; i < in.size(); i++) {
+            floatArr[i] = (float) arr[i];
+        }
+        //float split = QuickSelect.selectRecursive(floatArr, Math.round(in.size() / 2));
         float splitX = splitXAverage(in);
+        //float splitX = QuickSelect.selectRecursive(floatArr, Math.round(in.size() / 2));
+        //System.out.println(splitX);
         // Convert points to constraints
         List<Constraint2D> constraints = new ArrayList<>();
         for (Point point : in) {
@@ -75,15 +97,34 @@ public class Marriage implements CHAlgo {
         for (Point point : in) {
             //System.out.println(point.x);
             if (point.x <= rightBridgePoint.x && point.x >= leftBridgePoint.x) continue;
-            if (point.x <= splitX) leftPoints.add(point);
-            else rightPoints.add(point);
+            if (recursionDirection == 0) {
+                if (point.x <= splitX) leftPoints.add(point);
+                else rightPoints.add(point);
+            } else if (recursionDirection == 1) {
+                //Looking at points to the right of some previous recursion
+                // prev rightbridgepoint - (some potential useless points) - leftbridgepoint
+                if (point.x <= splitX) continue;
+                else rightPoints.add(point);
+            } else if (recursionDirection == -1) {
+                //leftbridgepoint - (some points under bridge ) - splitx - (some points under bridge) -  rightbridgepoint - (some potential useless points) - previous leftbridgepoint
+                if (point.x >= splitX) continue;
+                else leftPoints.add(point);
+            }
         }
         //System.out.println(in.size() + " split into " + leftPoints.size() + ", " + rightPoints.size());
         // Accumulate solution from recursive calls
+        /*System.out.println("Leftbridge point: " + leftBridgePoint);
+        System.out.println("Right bridge point: " + rightBridgePoint);*/
+        if (leftPoints.size() > 1) {
+            leftPoints.add(leftBridgePoint);
+        }
+        if (rightPoints.size() > 1) {
+            rightPoints.add(rightBridgePoint);
+        }
         out.add(leftBridgePoint);
         out.add(rightBridgePoint);
-        out.addAll(convexSet(leftPoints, depth + 1));
-        out.addAll(convexSet(rightPoints, depth + 1));
+        out.addAll(convexSet(leftPoints, depth + 1, -1, leftBridgePoint, rightBridgePoint));
+        out.addAll(convexSet(rightPoints, depth + 1, 1, leftBridgePoint, rightBridgePoint));
         return out;
     }
 
