@@ -56,6 +56,22 @@ class ConvexHullTest {
         return points;
     }
 
+    public static ArrayList<Point> generatePointsInSquare(int n) {
+        ArrayList<Point> pointCloud = new ArrayList<>();
+        for (int j = 0; j < n; j++) {
+            pointCloud.add(new Point(random.nextFloat(), random.nextFloat()));
+        }
+        return pointCloud;
+    }
+
+    public static ArrayList<Point> generatePointsQuaratic(int n) {
+        ArrayList<Point> pointCloud = new ArrayList<>();
+        for (int j = 0; j < n; j++) {
+            pointCloud.add(nextPoint());
+        }
+        return pointCloud;
+    }
+
     @BeforeAll
     static void setUp() {
         random = new Random();
@@ -191,6 +207,14 @@ class ConvexHullTest {
         testConvexHullAlgo(marriage, testCasesQuadratic);
         testConvexHullAlgo(marriage, testCasesCircle);
         testConvexHullAlgo(marriage, testCasesLog);
+    }
+
+    @Test
+    void createVisualizeFile() {
+        ArrayList<Point> points = generatePointsQuaratic(100);
+        CHAlgo algo = new Marriage();
+        List<Point> gwRes = algo.convex(points).returnResult();
+        saveInputAndHull(points, gwRes);
     }
 
     @Test
